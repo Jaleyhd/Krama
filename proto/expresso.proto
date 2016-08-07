@@ -1,0 +1,26 @@
+syntax = "proto2";
+
+message Job {
+  optional string job_type=1; //IO,Train,Benchmark,Transform
+  optional string desc=2;// Description of Job Conf
+  optional string doc_path=3;// Documentation of Job
+  repeated Arg data=4;//Data related Arguments
+  repeated Arg config=5;//Config related Arguments
+  optional string script_path=6;// Path of main script to be executed
+  repeated string depends_on =7;// Dependended Jobs
+  repeated string pre_exec_rules_path=8;// rules to be checked just before job executes
+  repeated string post_exec_rules_path=9;//rules to be checked just after the job is executed.
+  optional string prereq_install_path=10;// Install all the pre-requisites required for job
+  optional string prereq_check_path=11;// Check for pre-requisites 
+  optional string log_path=12;// Location where job logs will be kept
+}
+message Arg {
+  optional string name =1;// Name of the data/config
+  repeated string category=2;// Type of data - hdf5,etc,
+  optional string desc=3;// Description of Arg
+  optional string doc_path=4;// Extended Description in rst
+  optional string config_proto_path=5;//Required only if type=custom,else overridden
+  optional string config_path=6;// Path of config for Data/Config use cases.
+  repeated string pre_exec_rules_path=7;// rules to be checked just before job executes
+  repeated string post_exec_rules_path=8;//rules to be checked just after the job is executed.
+}

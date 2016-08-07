@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+message JobConfig {
+  string name =1;
+  repeated string depends_on =2;
+  repeated string rule_path=3;
+  repeated string doc_path=4;
+  string config_path=5;
+  string script_path=6;
+  string prereq_install_path=7;
+  string prereq check_path=8;
+  string log_path=9;
+  ConfigLang config_lang=10[default=PYTHON];
+  enum ConfigLang {
+    CPP = 0;
+    CHASH = 1;
+    GO = 2;
+    JAVA = 3;
+    PYTHON = 4;
+  }
+}
