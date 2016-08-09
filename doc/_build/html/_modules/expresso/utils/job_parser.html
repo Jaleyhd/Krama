@@ -1,0 +1,396 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>expresso.utils.job_parser &mdash; Expresso beta documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Expresso beta documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Expresso
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../details/example.html">Job Parser</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../index.html">Expresso</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      
+    <li>expresso.utils.job_parser</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for expresso.utils.job_parser</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">google.protobuf</span> <span class="kn">import</span> <span class="n">text_format</span>
+<span class="kn">from</span> <span class="nn">..proto</span> <span class="kn">import</span> <span class="n">expresso_pb2</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">common</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">job_parser</span>
+<span class="sd">----------------------</span>
+<span class="sd">This module deals with job related manipulations. In expresso, job is</span>
+<span class="sd">understood as a subtask which needs to be performed to get expected result.</span>
+<span class="sd">Job config is a file which gives you complete information related to this</span>
+<span class="sd">subtask.</span>
+<span class="sd">For the bellow documented functions, the job_config_path will be as follow :</span>
+<span class="sd">literal blocks::</span>
+<span class="sd">    name: &quot;job1&quot;</span>
+<span class="sd">    type: &quot;mnist_to_hdf5&quot;</span>
+<span class="sd">    category: &quot;computer_vision&quot;</span>
+<span class="sd">    category: &quot;dataset&quot;</span>
+<span class="sd">    category: &quot;to_hdf5&quot;</span>
+<span class="sd">    desc: &quot;Importing mnist dataset in hdf5&quot;</span>
+<span class="sd">    data {</span>
+<span class="sd">      name: &quot;mnist_import&quot;</span>
+<span class="sd">      type: &quot;mnist_import&quot;</span>
+<span class="sd">      category: &quot;machine_learning&quot;</span>
+<span class="sd">      desc: &quot;Import mnist data from net&quot;</span>
+<span class="sd">      config_path: &quot;./data_config.prototxt&quot;</span>
+<span class="sd">    }</span>
+<span class="sd">    log_path: &quot;log&quot;</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">main_paths</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;doc_path&#39;</span><span class="p">,</span> <span class="s1">&#39;script_path&#39;</span><span class="p">,</span> <span class="s1">&#39;prereq_install_path&#39;</span><span class="p">,</span> <span class="s1">&#39;log_path&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;post_exec_rules_path&#39;</span><span class="p">,</span> <span class="s1">&#39;pre_exec_rules_path&#39;</span><span class="p">,</span><span class="s1">&#39;job_config_path&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;job_config_proto_path&#39;</span><span class="p">]</span>
+<span class="n">arg_paths</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;doc_path&#39;</span><span class="p">,</span> <span class="s1">&#39;config_proto_path&#39;</span><span class="p">,</span> <span class="s1">&#39;config_path&#39;</span><span class="p">,</span>
+             <span class="s1">&#39;post_exec_rules_path&#39;</span><span class="p">,</span>
+             <span class="s1">&#39;pre_exec_rules_path&#39;</span><span class="p">]</span>
+<span class="n">job_types</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;IO&#39;</span><span class="p">,</span> <span class="s1">&#39;Train&#39;</span><span class="p">,</span> <span class="s1">&#39;Benchmark&#39;</span><span class="p">,</span> <span class="s1">&#39;Transform&#39;</span><span class="p">]</span>
+
+
+
+<div class="viewcode-block" id="parse_job"><a class="viewcode-back" href="../../../details/example.html#expresso.utils.job_parser.parse_job">[docs]</a><span class="k">def</span> <span class="nf">parse_job</span><span class="p">(</span><span class="n">expresso_root</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">job_config_path</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    It parses the job prototxt file and returns a protobuf message</span>
+<span class="sd">    initialized with the input job prototxt file.</span>
+<span class="sd">    literal blocks::</span>
+
+<span class="sd">        print expresso.utils.parse_job(job_config_path=&#39;my_job_config_path.prototxt&#39;)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        expresso_root(not required): Path or expresso root directory, mostly</span>
+<span class="sd">        it is</span>
+<span class="sd">        &#39;/usr/share/expresso&#39;</span>
+<span class="sd">        job_config_path: Path of the Job prototxt which needs to be parsed</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Job protobuf message with fields parsed as per the job prototxt</span>
+<span class="sd">        provided</span>
+
+<span class="sd">    literal blocks::</span>
+<span class="sd">        name: &quot;job1&quot;</span>
+<span class="sd">        type: &quot;mnist_to_hdf5&quot;</span>
+<span class="sd">        category: &quot;computer_vision&quot;</span>
+<span class="sd">        category: &quot;dataset&quot;</span>
+<span class="sd">        category: &quot;to_hdf5&quot;</span>
+<span class="sd">        desc: &quot;Importing mnist dataset in hdf5&quot;</span>
+<span class="sd">        data {</span>
+<span class="sd">          name: &quot;mnist_import&quot;</span>
+<span class="sd">          type: &quot;mnist_import&quot;</span>
+<span class="sd">          category: &quot;machine_learning&quot;</span>
+<span class="sd">          desc: &quot;Import mnist data from net&quot;</span>
+<span class="sd">          config_path: &quot;./data_config.prototxt&quot;</span>
+<span class="sd">        }</span>
+<span class="sd">        log_path: &quot;log&quot;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">job</span> <span class="o">=</span> <span class="n">expresso_pb2</span><span class="o">.</span><span class="n">Job</span><span class="p">()</span>
+    <span class="n">text_format</span><span class="o">.</span><span class="n">Merge</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s1">&#39;/usr/share/expresso/proto/jobexample.prototxt&#39;</span><span class="p">,</span>
+                           <span class="s1">&#39;r&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span> <span class="n">job</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">job</span></div>
+
+
+<span class="k">def</span> <span class="nf">make_job_paths_absolute</span><span class="p">(</span><span class="n">job</span><span class="p">,</span> <span class="n">job_config_path</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">path_attr_name</span> <span class="ow">in</span> <span class="n">main_paths</span><span class="p">:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">HasField</span><span class="p">(</span><span class="n">path_attr_name</span><span class="p">)):</span>
+            <span class="n">job</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="n">path_attr_name</span><span class="p">,</span>
+                            <span class="n">common</span><span class="o">.</span><span class="n">get_file_path</span><span class="p">(</span><span class="n">job_config_path</span><span class="p">,</span>
+                                                 <span class="n">job</span><span class="o">.</span><span class="n">__getattribute__</span><span class="p">(</span>
+                                                     <span class="n">path_attr_name</span><span class="p">)))</span>
+
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">data_arg</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">data</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">path_attr_name</span> <span class="ow">in</span> <span class="n">arg_paths</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">HasField</span><span class="p">(</span><span class="n">path_attr_name</span><span class="p">)):</span>
+                <span class="n">job</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="n">path_attr_name</span><span class="p">,</span>
+                                          <span class="n">common</span><span class="o">.</span><span class="n">get_file_path</span><span class="p">(</span><span class="n">job_config_path</span><span class="p">,</span>
+                                                               <span class="n">job</span><span class="o">.</span><span class="n">data</span><span class="p">[</span>
+                                                                   <span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">__getattribute__</span><span class="p">(</span>
+                                                                   <span class="n">path_attr_name</span><span class="p">)))</span>
+
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">config_arg</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">config</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">path_attr_name</span> <span class="ow">in</span> <span class="n">arg_paths</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">HasField</span><span class="p">(</span><span class="n">path_attr_name</span><span class="p">)):</span>
+                <span class="n">job</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="n">path_attr_name</span><span class="p">,</span>
+                                          <span class="n">common</span><span class="o">.</span><span class="n">get_file_path</span><span class="p">(</span><span class="n">job_config_path</span><span class="p">,</span>
+                                                               <span class="n">job</span><span class="o">.</span><span class="n">config</span><span class="p">[</span>
+                                                                   <span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">__getattribute__</span><span class="p">(</span>
+                                                                   <span class="n">path_attr_name</span><span class="p">)))</span>
+
+
+    <span class="k">return</span> <span class="n">job</span>
+
+<span class="k">def</span> <span class="nf">make_arg_paths_absolute</span><span class="p">(</span><span class="n">arg</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">arg_config_path</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">path_attr_name</span> <span class="ow">in</span> <span class="n">arg_paths</span><span class="p">:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">HasField</span><span class="p">(</span><span class="n">path_attr_name</span><span class="p">)):</span>
+            <span class="n">arg</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="n">path_attr_name</span><span class="p">,</span>
+                                      <span class="n">common</span><span class="o">.</span><span class="n">get_file_path</span><span class="p">(</span><span class="n">arg_config_path</span><span class="p">,</span>
+                                                           <span class="n">arg</span><span class="o">.</span><span class="n">__getattribute__</span><span class="p">(</span>
+                                                               <span class="n">path_attr_name</span><span class="p">)))</span>
+
+    <span class="k">return</span> <span class="n">arg</span>
+
+<span class="k">def</span> <span class="nf">get_category_path</span><span class="p">(</span><span class="n">arg</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">type_val</span><span class="o">=</span><span class="s1">&#39;data&#39;</span><span class="p">,</span>
+                      <span class="n">expresso_root</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">type_val</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span> <span class="ow">or</span> <span class="n">expresso_root</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span> \
+            <span class="ow">or</span> <span class="n">arg</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Empty parameters to construct category path&#39;</span><span class="p">)</span>
+
+    <span class="n">category_rel_path</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">cat</span> <span class="k">for</span> <span class="n">cat</span> <span class="ow">in</span> <span class="n">arg</span><span class="o">.</span><span class="n">category</span><span class="p">])</span>
+    <span class="n">category_path</span> <span class="o">=</span> <span class="n">expresso_root</span> <span class="o">+</span> <span class="s1">&#39;/storage/&#39;</span> <span class="o">+</span> <span class="n">type_val</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> \
+      <span class="n">category_rel_path</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">arg</span><span class="o">.</span><span class="n">type</span>
+    <span class="k">print</span> <span class="n">category_path</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">category_path</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="n">category_path</span>
+    <span class="k">else</span> <span class="p">:</span> <span class="k">return</span> <span class="bp">None</span>
+
+
+<span class="k">def</span> <span class="nf">merge_with_parent_arg</span><span class="p">(</span><span class="n">arg</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">arg_type</span><span class="o">=</span><span class="s1">&#39;data&#39;</span><span class="p">,</span><span class="n">expresso_root</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="c1"># Step 1 : Get parent category path for Arg</span>
+    <span class="n">parent_arg_path</span> <span class="o">=</span> <span class="n">get_category_path</span><span class="p">(</span><span class="n">arg</span><span class="o">=</span><span class="n">arg</span><span class="p">,</span> <span class="n">type_val</span><span class="o">=</span><span class="n">arg_type</span><span class="p">,</span>
+                                     <span class="n">expresso_root</span><span class="o">=</span><span class="n">expresso_root</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">parent_arg_path</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">):</span> <span class="k">return</span> <span class="n">arg</span><span class="p">;</span>
+    <span class="n">parent_config_arg</span> <span class="o">=</span> <span class="n">expresso_pb2</span><span class="o">.</span><span class="n">Arg</span><span class="p">()</span>
+    <span class="n">text_format</span><span class="o">.</span><span class="n">Merge</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">parent_arg_path</span> <span class="o">+</span> <span class="s1">&#39;/main.prototxt&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span>
+                      <span class="n">message</span><span class="o">=</span><span class="n">parent_config_arg</span><span class="p">)</span>
+    <span class="n">parent_config_arg</span> <span class="o">=</span> <span class="n">make_arg_paths_absolute</span><span class="p">(</span><span class="n">arg</span><span class="o">=</span><span class="n">parent_config_arg</span><span class="p">,</span>
+                                             <span class="n">arg_config_path</span><span class="o">=</span><span class="n">parent_arg_path</span><span class="p">)</span>
+
+    <span class="c1"># Step 2 : Merging Category parent path for Arg</span>
+    <span class="k">for</span> <span class="n">path_attr_name</span> <span class="ow">in</span> <span class="n">arg_paths</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">parent_config_arg</span><span class="o">.</span><span class="n">HasField</span><span class="p">(</span><span class="n">path_attr_name</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> \
+                <span class="n">arg</span><span class="o">.</span><span class="n">HasField</span><span class="p">(</span><span class="s1">&#39;parent_&#39;</span><span class="o">+</span><span class="n">path_attr_name</span><span class="p">):</span>
+            <span class="n">arg</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="s1">&#39;parent_&#39;</span><span class="o">+</span><span class="n">path_attr_name</span><span class="p">,</span>
+                            <span class="n">parent_config_arg</span><span class="o">.</span><span class="n">__getattribute__</span><span class="p">(</span>
+                                                               <span class="n">path_attr_name</span><span class="p">))</span>
+
+
+    <span class="k">return</span> <span class="n">arg</span>
+
+
+<span class="k">def</span> <span class="nf">merge_with_parent_job</span><span class="p">(</span><span class="n">job</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">expresso_root</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+
+    <span class="n">parent_job_path</span> <span class="o">=</span> <span class="n">get_category_path</span><span class="p">(</span><span class="n">arg</span><span class="o">=</span><span class="n">job</span><span class="p">,</span> <span class="n">type_val</span><span class="o">=</span><span class="s1">&#39;job&#39;</span><span class="p">,</span>
+                                     <span class="n">expresso_root</span><span class="o">=</span><span class="n">expresso_root</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">parent_job_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="c1"># Step 1 : Get parent category path for Job</span>
+        <span class="n">parent_config_job</span> <span class="o">=</span> <span class="n">expresso_pb2</span><span class="o">.</span><span class="n">Job</span><span class="p">()</span>
+        <span class="n">text_format</span><span class="o">.</span><span class="n">Merge</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">parent_job_path</span> <span class="o">+</span> <span class="s1">&#39;/main.prototxt&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;r&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span>
+                          <span class="n">message</span><span class="o">=</span><span class="n">parent_config_job</span><span class="p">)</span>
+        <span class="n">parent_config_job</span>  <span class="o">=</span> <span class="n">make_job_paths_absolute</span><span class="p">(</span><span class="n">job</span><span class="o">=</span><span class="n">parent_config_job</span><span class="p">,</span>
+                                                    <span class="n">job_config_path</span><span class="o">=</span><span class="n">parent_job_path</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">path_attr_name</span> <span class="ow">in</span> <span class="n">main_paths</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">parent_config_job</span><span class="o">.</span><span class="n">HasField</span><span class="p">(</span><span class="n">path_attr_name</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> \
+                    <span class="n">job</span><span class="o">.</span><span class="n">HasField</span><span class="p">(</span><span class="s1">&#39;parent_&#39;</span><span class="o">+</span><span class="n">path_attr_name</span><span class="p">):</span>
+                <span class="k">print</span> <span class="n">path_attr_name</span><span class="o">+</span><span class="s1">&#39;123&#39;</span>
+                <span class="n">job</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="s1">&#39;parent_&#39;</span><span class="o">+</span><span class="n">path_attr_name</span><span class="p">,</span>
+                                <span class="n">parent_config_job</span><span class="o">.</span><span class="n">__getattribute__</span><span class="p">(</span>
+                                                                   <span class="n">path_attr_name</span><span class="p">))</span>
+
+
+    <span class="c1"># Step 2 : Merging parent category path for Job</span>
+
+
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span><span class="n">data_arg</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">data</span><span class="p">):</span>
+        <span class="n">arg_val</span><span class="o">=</span><span class="n">merge_with_parent_arg</span><span class="p">(</span><span class="n">arg</span><span class="o">=</span><span class="n">job</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span>
+                                      <span class="n">arg_type</span><span class="o">=</span><span class="s1">&#39;data&#39;</span><span class="p">,</span><span class="n">expresso_root</span><span class="o">=</span><span class="n">expresso_root</span><span class="p">);</span>
+        <span class="k">if</span> <span class="n">arg_val</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span> <span class="k">continue</span>
+        <span class="n">job</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">CopyFrom</span><span class="p">(</span><span class="n">arg_val</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span><span class="n">data_arg</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">config</span><span class="p">):</span>
+        <span class="n">arg_val</span><span class="o">=</span><span class="n">merge_with_parent_arg</span><span class="p">(</span><span class="n">arg</span><span class="o">=</span><span class="n">job</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span>
+                                      <span class="n">arg_type</span><span class="o">=</span><span class="s1">&#39;config&#39;</span><span class="p">,</span><span class="n">expresso_root</span><span class="o">=</span><span class="bp">None</span><span class="p">);</span>
+        <span class="k">if</span> <span class="n">arg_val</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span> <span class="k">continue</span>
+        <span class="n">job</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">CopyFrom</span><span class="p">(</span><span class="n">arg_val</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">job</span>
+
+<span class="n">job</span> <span class="o">=</span> <span class="n">parse_job</span><span class="p">(</span><span class="n">expresso_root</span><span class="o">=</span><span class="s1">&#39;/usr/share/expresso&#39;</span><span class="p">,</span>
+                <span class="n">job_config_path</span><span class="o">=</span><span class="s1">&#39;/usr/share/expresso/proto/jobexample.prototxt&#39;</span><span class="p">)</span>
+<span class="n">job</span> <span class="o">=</span> <span class="n">make_job_paths_absolute</span><span class="p">(</span><span class="n">job</span><span class="p">,</span><span class="s1">&#39;/usr/share/expresso/proto&#39;</span><span class="p">)</span>
+
+<span class="n">job</span> <span class="o">=</span> <span class="n">merge_with_parent_job</span><span class="p">(</span><span class="n">job</span><span class="o">=</span><span class="n">job</span><span class="p">,</span><span class="n">expresso_root</span><span class="o">=</span><span class="s1">&#39;/usr/share/expresso&#39;</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">job</span><span class="p">;</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Jaley H Dholakiya.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'beta',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

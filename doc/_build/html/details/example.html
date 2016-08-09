@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Example &mdash; Expresso beta documentation</title>
+  <title>Job Parser &mdash; Expresso beta documentation</title>
   
 
   
@@ -81,7 +81,10 @@
             
             
                 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="">Example</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Job Parser</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#intro">Intro</a></li>
+</ul>
+</li>
 </ul>
 
             
@@ -112,7 +115,7 @@
   <ul class="wy-breadcrumbs">
     <li><a href="../index.html">Docs</a> &raquo;</li>
       
-    <li>Example</li>
+    <li>Job Parser</li>
       <li class="wy-breadcrumbs-aside">
         
           
@@ -126,9 +129,13 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-example">
-<span id="example"></span><h1>Example<a class="headerlink" href="#module-example" title="Permalink to this headline">¶</a></h1>
-<p>Example Google style docstrings.</p>
+  <div class="section" id="module-expresso">
+<span id="job-parser"></span><h1>Job Parser<a class="headerlink" href="#module-expresso" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="intro">
+<h2>Intro<a class="headerlink" href="#intro" title="Permalink to this headline">¶</a></h2>
+<p>Hello</p>
+</div>
+<span class="target" id="module-expresso.example"></span><p>Example Google style docstrings.</p>
 <p>This module demonstrates documentation as specified by the <a class="reference external" href="http://google.github.io/styleguide/pyguide.html">Google Python
 Style Guide</a>. Docstrings may extend over multiple lines. Sections are created
 with a section header and a colon followed by a block of indented text.</p>
@@ -146,15 +153,12 @@ literal blocks:</p>
 are also implicitly created anytime a new section starts.</p>
 <dl class="docutils">
 <dt>Attributes:</dt>
-<dd><dl class="first last docutils">
-<dt>module_level_variable1 (int): Module level variables may be documented in</dt>
-<dd><p class="first">either the <code class="docutils literal"><span class="pre">Attributes</span></code> section of the module docstring, or in an
+<dd><p class="first">module_level_variable1 (int): Module level variables may be documented in
+either the <code class="docutils literal"><span class="pre">Attributes</span></code> section of the module docstring, or in an
 inline docstring immediately following the variable.</p>
 <p class="last">Either form is acceptable, but the two should not be mixed. Choose
 one convention to document module level variables and be consistent
 with it.</p>
-</dd>
-</dl>
 </dd>
 <dt>Todo:</dt>
 <dd><ul class="first last simple">
@@ -164,8 +168,8 @@ with it.</p>
 </dd>
 </dl>
 <dl class="class">
-<dt id="example.ExampleClass">
-<em class="property">class </em><code class="descclassname">example.</code><code class="descname">ExampleClass</code><span class="sig-paren">(</span><em>param1</em>, <em>param2</em>, <em>param3</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/example.html#ExampleClass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#example.ExampleClass" title="Permalink to this definition">¶</a></dt>
+<dt id="expresso.example.ExampleClass">
+<em class="property">class </em><code class="descclassname">expresso.example.</code><code class="descname">ExampleClass</code><span class="sig-paren">(</span><em>param1</em>, <em>param2</em>, <em>param3</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/expresso/example.html#ExampleClass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#expresso.example.ExampleClass" title="Permalink to this definition">¶</a></dt>
 <dd><p>The summary line for a class docstring should fit on one line.</p>
 <p>If the class has public attributes, they may be documented here
 in an <code class="docutils literal"><span class="pre">Attributes</span></code> section and follow the same formatting as a
@@ -181,26 +185,26 @@ to <a class="reference external" href="https://www.python.org/dev/peps/pep-0484/
 attr2 (Optional[int]): Description of <cite>attr2</cite>.</dd>
 </dl>
 <dl class="attribute">
-<dt id="example.ExampleClass.attr3">
-<code class="descname">attr3</code><em class="property"> = None</em><a class="headerlink" href="#example.ExampleClass.attr3" title="Permalink to this definition">¶</a></dt>
+<dt id="expresso.example.ExampleClass.attr3">
+<code class="descname">attr3</code><em class="property"> = None</em><a class="headerlink" href="#expresso.example.ExampleClass.attr3" title="Permalink to this definition">¶</a></dt>
 <dd><p>Doc comment <em>inline</em> with attribute</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="example.ExampleClass.attr4">
-<code class="descname">attr4</code><em class="property"> = None</em><a class="headerlink" href="#example.ExampleClass.attr4" title="Permalink to this definition">¶</a></dt>
+<dt id="expresso.example.ExampleClass.attr4">
+<code class="descname">attr4</code><em class="property"> = None</em><a class="headerlink" href="#expresso.example.ExampleClass.attr4" title="Permalink to this definition">¶</a></dt>
 <dd><p>List[str]: Doc comment <em>before</em> attribute, with type specified</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="example.ExampleClass.attr5">
-<code class="descname">attr5</code><em class="property"> = None</em><a class="headerlink" href="#example.ExampleClass.attr5" title="Permalink to this definition">¶</a></dt>
+<dt id="expresso.example.ExampleClass.attr5">
+<code class="descname">attr5</code><em class="property"> = None</em><a class="headerlink" href="#expresso.example.ExampleClass.attr5" title="Permalink to this definition">¶</a></dt>
 <dd><p>Optional[str]: Docstring <em>after</em> attribute, with type specified.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="example.ExampleClass.example_method">
-<code class="descname">example_method</code><span class="sig-paren">(</span><em>param1</em>, <em>param2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/example.html#ExampleClass.example_method"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#example.ExampleClass.example_method" title="Permalink to this definition">¶</a></dt>
+<dt id="expresso.example.ExampleClass.example_method">
+<code class="descname">example_method</code><span class="sig-paren">(</span><em>param1</em>, <em>param2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/expresso/example.html#ExampleClass.example_method"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#expresso.example.ExampleClass.example_method" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class methods are similar to regular functions.</p>
 <dl class="docutils">
 <dt>Note:</dt>
@@ -214,14 +218,14 @@ param2: The second parameter.</dd>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="example.ExampleClass.readonly_property">
-<code class="descname">readonly_property</code><a class="headerlink" href="#example.ExampleClass.readonly_property" title="Permalink to this definition">¶</a></dt>
+<dt id="expresso.example.ExampleClass.readonly_property">
+<code class="descname">readonly_property</code><a class="headerlink" href="#expresso.example.ExampleClass.readonly_property" title="Permalink to this definition">¶</a></dt>
 <dd><p>str: Properties should be documented in their getter method.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="example.ExampleClass.readwrite_property">
-<code class="descname">readwrite_property</code><a class="headerlink" href="#example.ExampleClass.readwrite_property" title="Permalink to this definition">¶</a></dt>
+<dt id="expresso.example.ExampleClass.readwrite_property">
+<code class="descname">readwrite_property</code><a class="headerlink" href="#expresso.example.ExampleClass.readwrite_property" title="Permalink to this definition">¶</a></dt>
 <dd><p>List[str]: Properties with both a getter and setter should only
 be documented in their getter method.</p>
 <p>If the setter method contains notable behavior, it should be
@@ -231,8 +235,8 @@ mentioned here.</p>
 </dd></dl>
 
 <dl class="exception">
-<dt id="example.ExampleError">
-<em class="property">exception </em><code class="descclassname">example.</code><code class="descname">ExampleError</code><span class="sig-paren">(</span><em>msg</em>, <em>code</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/example.html#ExampleError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#example.ExampleError" title="Permalink to this definition">¶</a></dt>
+<dt id="expresso.example.ExampleError">
+<em class="property">exception </em><code class="descclassname">expresso.example.</code><code class="descname">ExampleError</code><span class="sig-paren">(</span><em>msg</em>, <em>code</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/expresso/example.html#ExampleError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#expresso.example.ExampleError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Exceptions are documented in the same way as classes.</p>
 <p>The __init__ method may be documented in either the class level
 docstring, or as a docstring on the __init__ method itself.</p>
@@ -251,8 +255,8 @@ code (int): Exception error code.</dd>
 </dd></dl>
 
 <dl class="function">
-<dt id="example.example_generator">
-<code class="descclassname">example.</code><code class="descname">example_generator</code><span class="sig-paren">(</span><em>n</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/example.html#example_generator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#example.example_generator" title="Permalink to this definition">¶</a></dt>
+<dt id="expresso.example.example_generator">
+<code class="descclassname">expresso.example.</code><code class="descname">example_generator</code><span class="sig-paren">(</span><em>n</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/expresso/example.html#example_generator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#expresso.example.example_generator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generators have a <code class="docutils literal"><span class="pre">Yields</span></code> section instead of a <code class="docutils literal"><span class="pre">Returns</span></code> section.</p>
 <dl class="docutils">
 <dt>Args:</dt>
@@ -271,8 +275,8 @@ to use the function.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="example.module_level_function">
-<code class="descclassname">example.</code><code class="descname">module_level_function</code><span class="sig-paren">(</span><em>param1</em>, <em>param2=None</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/example.html#module_level_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#example.module_level_function" title="Permalink to this definition">¶</a></dt>
+<dt id="expresso.example.module_level_function">
+<code class="descclassname">expresso.example.</code><code class="descname">module_level_function</code><span class="sig-paren">(</span><em>param1</em>, <em>param2=None</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/expresso/example.html#module_level_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#expresso.example.module_level_function" title="Permalink to this definition">¶</a></dt>
 <dd><p>This is an example of a module level function.</p>
 <p>Function parameters should be documented in the <code class="docutils literal"><span class="pre">Args</span></code> section. The name
 of each parameter is required. The type and description of each parameter
@@ -325,11 +329,49 @@ including literal blocks:</p>
 </dd></dl>
 
 <dl class="data">
-<dt id="example.module_level_variable2">
-<code class="descclassname">example.</code><code class="descname">module_level_variable2</code><em class="property"> = 98765</em><a class="headerlink" href="#example.module_level_variable2" title="Permalink to this definition">¶</a></dt>
+<dt id="expresso.example.module_level_variable2">
+<code class="descclassname">expresso.example.</code><code class="descname">module_level_variable2</code><em class="property"> = 98765</em><a class="headerlink" href="#expresso.example.module_level_variable2" title="Permalink to this definition">¶</a></dt>
 <dd><p>int: Module level variable documented inline.</p>
 <p>The docstring may span multiple lines. The type may optionally be specified
 on the first line, separated by a colon.</p>
+</dd></dl>
+
+<span class="target" id="module-expresso.utils.job_parser"></span><dl class="function">
+<dt id="expresso.utils.job_parser.parse_job">
+<code class="descclassname">expresso.utils.job_parser.</code><code class="descname">parse_job</code><span class="sig-paren">(</span><em>expresso_root=None</em>, <em>job_config_path=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/expresso/utils/job_parser.html#parse_job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#expresso.utils.job_parser.parse_job" title="Permalink to this definition">¶</a></dt>
+<dd><p>It parses the job prototxt file and returns a protobuf message
+initialized with the input job prototxt file.
+literal blocks:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">print</span> <span class="n">expresso</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">parse_job</span><span class="p">(</span><span class="n">job_config_path</span><span class="o">=</span><span class="s1">&#39;my_job_config_path.prototxt&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>expresso_root(not required): Path or expresso root directory, mostly
+it is
+&#8216;/usr/share/expresso&#8217;
+job_config_path: Path of the Job prototxt which needs to be parsed</dd>
+<dt>Returns:</dt>
+<dd>Job protobuf message with fields parsed as per the job prototxt
+provided</dd>
+<dt>literal blocks::</dt>
+<dd><p class="first">name: &#8220;job1&#8221;
+type: &#8220;mnist_to_hdf5&#8221;
+category: &#8220;computer_vision&#8221;
+category: &#8220;dataset&#8221;
+category: &#8220;to_hdf5&#8221;
+desc: &#8220;Importing mnist dataset in hdf5&#8221;
+data {</p>
+<blockquote>
+<div>name: &#8220;mnist_import&#8221;
+type: &#8220;mnist_import&#8221;
+category: &#8220;machine_learning&#8221;
+desc: &#8220;Import mnist data from net&#8221;
+config_path: &#8221;./data_config.prototxt&#8221;</div></blockquote>
+<p class="last">}
+log_path: &#8220;log&#8221;</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>

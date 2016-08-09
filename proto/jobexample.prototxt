@@ -1,9 +1,14 @@
-job_type: "IO"
+name: "job1"
+type: "mnist_to_hdf5"
+category: "computer_vision"
+category: "dataset"
+category: "to_hdf5"
 desc: "Importing mnist dataset in hdf5"
 data {
   name: "mnist_import"
+  type: "mnist_import"
   category: "machine_learning"
   desc: "Import mnist data from net"
   config_path: "./data_config.prototxt"
 }
-
+log_path: "log"
