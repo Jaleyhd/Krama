@@ -1,0 +1,257 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>expresso.utils.graph_parser &mdash; Expresso beta documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Expresso beta documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Expresso
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../details/example.html">Utils</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../index.html">Expresso</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      
+    <li>expresso.utils.graph_parser</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for expresso.utils.graph_parser</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module deals with job related manipulations. In expresso, job is</span>
+<span class="sd">understood as a subtask which needs to be performed to get expected result.</span>
+<span class="sd">Job config is a file which gives you complete information related to this</span>
+<span class="sd">subtask.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">dag</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">common</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">job_parser</span>
+<span class="kn">from</span> <span class="nn">google.protobuf</span> <span class="kn">import</span> <span class="n">text_format</span>
+<span class="kn">from</span> <span class="nn">..proto</span> <span class="kn">import</span> <span class="n">expresso_pb2</span>
+
+<div class="viewcode-block" id="validate_dag"><a class="viewcode-back" href="../../../details/example.html#expresso.utils.graph_parser.validate_dag">[docs]</a><span class="k">def</span> <span class="nf">validate_dag</span><span class="p">(</span><span class="n">schedule_graph</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    It validates the attributes of Graph and also looks into the cyclic</span>
+<span class="sd">    dependencies in it. It raises an exception in case of DAG Validation Faliure.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        schedule_graph: ScheduleGraph Protobuf Message Object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="create_dag"><a class="viewcode-back" href="../../../details/example.html#expresso.utils.graph_parser.create_dag">[docs]</a><span class="k">def</span> <span class="nf">create_dag</span><span class="p">(</span><span class="n">expresso_root</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">project_path</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    It creates a Schedule Graph Object which consists of Job&#39;s execution related information.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        expresso_root (str): Path of expresso&#39;s installation location. Mostly it is &#39;/usr/share/expresso&#39;</span>
+<span class="sd">        project_path (str): Path of the project folder. It consists of job related subfolders in it.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        schedule_graph (protobuf msg): Parsed Protobuf message capturing all jobs in</span>
+<span class="sd">         project with its dependency.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">schedule_graph</span><span class="o">=</span><span class="n">expresso_pb2</span><span class="o">.</span><span class="n">ScheduleGraph</span><span class="p">()</span>
+    <span class="n">project_name</span><span class="o">=</span><span class="n">project_path</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">];</span>
+    <span class="k">if</span> <span class="n">project_name</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Project path is not present&#39;</span><span class="p">)</span>
+    <span class="n">schedule_graph</span><span class="o">.</span><span class="n">name</span><span class="o">=</span><span class="n">project_name</span> <span class="c1">#Name of project</span>
+    <span class="n">folder_list</span><span class="o">=</span><span class="n">common</span><span class="o">.</span><span class="n">get_folders</span><span class="p">(</span><span class="n">project_path</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">folder_list</span><span class="p">:</span>
+        <span class="n">schedule_job</span><span class="o">=</span><span class="n">expresso_pb2</span><span class="o">.</span><span class="n">ScheduleJob</span><span class="p">()</span>
+        <span class="n">schedule_job</span><span class="o">.</span><span class="n">name</span><span class="o">=</span><span class="n">elem</span>
+        <span class="n">schedule_job</span><span class="o">.</span><span class="n">job</span><span class="o">=</span><span class="n">job_parser</span><span class="o">.</span><span class="n">get_job</span><span class="p">(</span><span class="n">expresso_root</span><span class="o">=</span><span class="n">expresso_root</span><span class="p">,</span>
+                                            <span class="n">job_config_path</span><span class="o">=</span><span class="n">expresso_root</span><span class="o">+</span><span class="s1">&#39;/&#39;</span>
+                                            <span class="o">+</span><span class="n">elem</span><span class="o">+</span><span class="s1">&#39;/main.prototxt&#39;</span><span class="p">)</span>
+        <span class="n">schedule_job</span><span class="o">.</span><span class="n">depends_on</span><span class="o">=</span><span class="n">schedule_job</span><span class="o">.</span><span class="n">job</span><span class="o">.</span><span class="n">depends_on</span>
+
+    <span class="n">validate_dag</span><span class="p">(</span><span class="n">schedule_graph</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">schedule_graph</span></div>
+
+
+<div class="viewcode-block" id="graph_to_json"><a class="viewcode-back" href="../../../details/example.html#expresso.utils.graph_parser.graph_to_json">[docs]</a><span class="k">def</span> <span class="nf">graph_to_json</span><span class="p">(</span><span class="n">schedule_graph</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        schedule_graph: ScheduleGraph Protobuf Message Object</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        schedule_graph_json: ScheduleGraph&#39;s JSON object</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">print</span> <span class="n">schedule_graph</span></div>
+
+
+<span class="c1">#graph_to_json()</span>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Jaley H Dholakiya.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'beta',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

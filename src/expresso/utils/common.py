@@ -1,3 +1,10 @@
+"""
+    This module deals with job related manipulations. In expresso, job is
+understood as a subtask which needs to be performed to get expected result.
+Job config is a file which gives you complete information related to this
+subtask.
+
+"""
 from __future__ import absolute_import
 from google.protobuf import text_format
 import os
@@ -16,10 +23,10 @@ def get_folders(main_folder=None):
                 if os.path.isdir(os.path.join(main_folder, folder))]
 
     #Check if main folder has any subfolders
-    if dir_list.count()==0 :
+    if len(dir_list)==0 :
         raise Exception("Add job directories in main folder")
 
-    return dir_list
+    return [elem.strip().split('/')[-1] for elem in dir_list ]
 
 def compile_core_config(expresso_root=None):
     subprocess.call("protoc -I "+expresso_root+'/proto --python_out='

@@ -81,7 +81,7 @@
             
             
                 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../details/example.html">Job Parser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../details/example.html">Utils</a></li>
 </ul>
 
             
@@ -127,20 +127,18 @@
            <div itemprop="articleBody">
             
   <h1>Source code for expresso.utils.job_parser</h1><div class="highlight"><pre>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
-<span class="kn">from</span> <span class="nn">google.protobuf</span> <span class="kn">import</span> <span class="n">text_format</span>
-<span class="kn">from</span> <span class="nn">..proto</span> <span class="kn">import</span> <span class="n">expresso_pb2</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">common</span>
-<span class="kn">import</span> <span class="nn">os</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">job_parser</span>
-<span class="sd">----------------------</span>
+
 <span class="sd">This module deals with job related manipulations. In expresso, job is</span>
 <span class="sd">understood as a subtask which needs to be performed to get expected result.</span>
 <span class="sd">Job config is a file which gives you complete information related to this</span>
 <span class="sd">subtask.</span>
 <span class="sd">For the bellow documented functions, the job_config_path will be as follow :</span>
-<span class="sd">literal blocks::</span>
+
+<span class="sd">.. code-block :: proto</span>
+<span class="sd">    :name: sample_job_config.prototxt</span>
+<span class="sd">    :caption: sample_job_config.prototxt</span>
+
 <span class="sd">    name: &quot;job1&quot;</span>
 <span class="sd">    type: &quot;mnist_to_hdf5&quot;</span>
 <span class="sd">    category: &quot;computer_vision&quot;</span>
@@ -148,17 +146,83 @@
 <span class="sd">    category: &quot;to_hdf5&quot;</span>
 <span class="sd">    desc: &quot;Importing mnist dataset in hdf5&quot;</span>
 <span class="sd">    data {</span>
-<span class="sd">      name: &quot;mnist_import&quot;</span>
-<span class="sd">      type: &quot;mnist_import&quot;</span>
-<span class="sd">      category: &quot;machine_learning&quot;</span>
-<span class="sd">      desc: &quot;Import mnist data from net&quot;</span>
-<span class="sd">      config_path: &quot;./data_config.prototxt&quot;</span>
+<span class="sd">        name: &quot;mnist_import&quot;</span>
+<span class="sd">        type: &quot;mnist_import&quot;</span>
+<span class="sd">        category: &quot;machine_learning&quot;</span>
+<span class="sd">        desc: &quot;Import mnist data from net&quot;</span>
+<span class="sd">        config_path: &quot;./data_config.prototxt&quot;</span>
 <span class="sd">    }</span>
 <span class="sd">    log_path: &quot;log&quot;</span>
+
+<span class="sd">The job config is parsed according to the structure defined by</span>
+<span class="sd">protocol as shown bellow. It is  mandatory to specify the highlighted fields in</span>
+<span class="sd">the job config file. The parent paths are supposed to be imported from the</span>
+<span class="sd">pre-defined parent modules available for users. These parent modules</span>
+<span class="sd">are present for both job and its arguments. They lay foundation for</span>
+<span class="sd">structure of user specified job config files in prototxt format. Each parent module</span>
+<span class="sd">can be uniquely identified by (type,category).</span>
+
+<span class="sd">.. code-block :: proto</span>
+<span class="sd">    :name: expresso.proto</span>
+<span class="sd">    :caption: expresso.proto</span>
+<span class="sd">    :emphasize-lines: 3,16,30,35</span>
+<span class="sd">    :linenos:</span>
+
+<span class="sd">    message Job {</span>
+<span class="sd">      optional string name=25;</span>
+<span class="sd">      optional string type=1; //IO,Train,Benchmark,Transform</span>
+<span class="sd">      optional string desc=2;// Description of Job Conf</span>
+<span class="sd">      optional string doc_path=3;// Documentation of Job</span>
+<span class="sd">      repeated string category=4;</span>
+<span class="sd">      repeated Arg data=5;//Data related Arguments</span>
+<span class="sd">      repeated Arg config=6;//Config related Arguments</span>
+<span class="sd">      optional string script_path=7;// Path of main script to be executed</span>
+<span class="sd">      optional string depends_on =8;// Dependended Jobs</span>
+<span class="sd">      optional string pre_exec_rules_path=9;// rules to be checked just before job executes</span>
+<span class="sd">      optional string post_exec_rules_path=10;//rules to be checked just after the job is executed.</span>
+<span class="sd">      optional string prereq_install_path=11;// Install all the pre-requisites required for job</span>
+<span class="sd">      optional string prereq_check_path=12;// Check for pre-requisites</span>
+<span class="sd">      optional string log_path=13;// Location where job logs will be kept</span>
+<span class="sd">      optional string job_config_path=14;//Necessary to specify Inputs and Outputs properly</span>
+<span class="sd">      optional string job_config_proto_path=15;//Necessary to specify Inputs and Outputs properly</span>
+<span class="sd">      optional string parent_doc_path=16;// Documentation of Job</span>
+<span class="sd">      optional string parent_job_config_path=17;</span>
+<span class="sd">      optional string parent_job_config_proto_path=18;</span>
+<span class="sd">      optional string parent_pre_exec_rules_path=19;// rules to be checked just before job executes</span>
+<span class="sd">      optional string parent_post_exec_rules_path=20;//rules to be checked just after the job is executed.</span>
+<span class="sd">      optional string parent_prereq_install_path=21;// Install all the pre-requisites required for job</span>
+<span class="sd">      optional string parent_prereq_check_path=22;// Check for pre-requisites</span>
+<span class="sd">      optional string parent_log_path=23;// Location where job logs will be kept</span>
+<span class="sd">      optional string parent_script_path=24;//Parent Script path</span>
+<span class="sd">    }</span>
+<span class="sd">    message Arg {</span>
+<span class="sd">      optional string name =15;//Name oof the job by which it should appear</span>
+<span class="sd">      optional string type =1;// Name of the data/config</span>
+<span class="sd">      repeated string category=2;// Type of data - hdf5,etc,</span>
+<span class="sd">      optional string desc=3;// Description of Arg</span>
+<span class="sd">      optional string doc_path=4;// Extended Description in rst</span>
+<span class="sd">      optional string config_proto_path=5;//Required only if type=custom,else overridden</span>
+<span class="sd">      optional string config_path=6;// Path of config for Data/Config use cases.</span>
+<span class="sd">      optional string pre_exec_rules_path=7;// rules to be checked just before job executes</span>
+<span class="sd">      optional string post_exec_rules_path=8;//rules to be checked just after the job is executed.</span>
+<span class="sd">      optional string parent_doc_path=9;// Extended Description in rst</span>
+<span class="sd">      optional string parent_config_path=10;//Config of parent to be overwritten by child</span>
+<span class="sd">      optional string parent_config_proto_path=11;//Required only if type=custom,else overridden</span>
+<span class="sd">      optional string parent_pre_exec_rules_path=12;//Not to be set by user</span>
+<span class="sd">      optional string parent_post_exec_rules_path=13;//Not to be set by user</span>
+<span class="sd">      optional string io_type=14[default=&#39;input&#39;];</span>
+<span class="sd">    }</span>
+
+
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">google.protobuf</span> <span class="kn">import</span> <span class="n">text_format</span>
+<span class="kn">from</span> <span class="nn">..proto</span> <span class="kn">import</span> <span class="n">expresso_pb2</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">common</span>
+<span class="kn">import</span> <span class="nn">os</span>
 
 <span class="n">main_paths</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;doc_path&#39;</span><span class="p">,</span> <span class="s1">&#39;script_path&#39;</span><span class="p">,</span> <span class="s1">&#39;prereq_install_path&#39;</span><span class="p">,</span> <span class="s1">&#39;log_path&#39;</span><span class="p">,</span>
-              <span class="s1">&#39;post_exec_rules_path&#39;</span><span class="p">,</span> <span class="s1">&#39;pre_exec_rules_path&#39;</span><span class="p">,</span><span class="s1">&#39;job_config_path&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;post_exec_rules_path&#39;</span><span class="p">,</span> <span class="s1">&#39;pre_exec_rules_path&#39;</span><span class="p">,</span> <span class="s1">&#39;job_config_path&#39;</span><span class="p">,</span>
               <span class="s1">&#39;job_config_proto_path&#39;</span><span class="p">]</span>
 <span class="n">arg_paths</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;doc_path&#39;</span><span class="p">,</span> <span class="s1">&#39;config_proto_path&#39;</span><span class="p">,</span> <span class="s1">&#39;config_path&#39;</span><span class="p">,</span>
              <span class="s1">&#39;post_exec_rules_path&#39;</span><span class="p">,</span>
@@ -166,40 +230,21 @@
 <span class="n">job_types</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;IO&#39;</span><span class="p">,</span> <span class="s1">&#39;Train&#39;</span><span class="p">,</span> <span class="s1">&#39;Benchmark&#39;</span><span class="p">,</span> <span class="s1">&#39;Transform&#39;</span><span class="p">]</span>
 
 
-
 <div class="viewcode-block" id="parse_job"><a class="viewcode-back" href="../../../details/example.html#expresso.utils.job_parser.parse_job">[docs]</a><span class="k">def</span> <span class="nf">parse_job</span><span class="p">(</span><span class="n">expresso_root</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">job_config_path</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    It parses the job prototxt file and returns a protobuf message</span>
 <span class="sd">    initialized with the input job prototxt file.</span>
-<span class="sd">    literal blocks::</span>
+<span class="sd">    literal blocks ::</span>
 
-<span class="sd">        print expresso.utils.parse_job(job_config_path=&#39;my_job_config_path.prototxt&#39;)</span>
+<span class="sd">        print expresso.utils.parse_job(job_config_path=&#39;sample_job_config.prototxt&#39;)</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        expresso_root(not required): Path or expresso root directory, mostly</span>
-<span class="sd">        it is</span>
-<span class="sd">        &#39;/usr/share/expresso&#39;</span>
-<span class="sd">        job_config_path: Path of the Job prototxt which needs to be parsed</span>
+<span class="sd">        expresso_root (string): Path or expresso root directory, mostly it is &#39;/usr/share/expresso&#39;</span>
+<span class="sd">        job_config_path (string): Path of the Job prototxt which needs to be parsed. Eg. :ref:`sample_job_config.prototxt`</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        Job protobuf message with fields parsed as per the job prototxt</span>
+<span class="sd">        job (protobuf msg): Job protobuf message with fields parsed as per the job prototxt</span>
 <span class="sd">        provided</span>
-
-<span class="sd">    literal blocks::</span>
-<span class="sd">        name: &quot;job1&quot;</span>
-<span class="sd">        type: &quot;mnist_to_hdf5&quot;</span>
-<span class="sd">        category: &quot;computer_vision&quot;</span>
-<span class="sd">        category: &quot;dataset&quot;</span>
-<span class="sd">        category: &quot;to_hdf5&quot;</span>
-<span class="sd">        desc: &quot;Importing mnist dataset in hdf5&quot;</span>
-<span class="sd">        data {</span>
-<span class="sd">          name: &quot;mnist_import&quot;</span>
-<span class="sd">          type: &quot;mnist_import&quot;</span>
-<span class="sd">          category: &quot;machine_learning&quot;</span>
-<span class="sd">          desc: &quot;Import mnist data from net&quot;</span>
-<span class="sd">          config_path: &quot;./data_config.prototxt&quot;</span>
-<span class="sd">        }</span>
-<span class="sd">        log_path: &quot;log&quot;</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">job</span> <span class="o">=</span> <span class="n">expresso_pb2</span><span class="o">.</span><span class="n">Job</span><span class="p">()</span>
@@ -208,7 +253,22 @@
     <span class="k">return</span> <span class="n">job</span></div>
 
 
-<span class="k">def</span> <span class="nf">make_job_paths_absolute</span><span class="p">(</span><span class="n">job</span><span class="p">,</span> <span class="n">job_config_path</span><span class="p">):</span>
+
+<div class="viewcode-block" id="make_job_paths_absolute"><a class="viewcode-back" href="../../../details/example.html#expresso.utils.job_parser.make_job_paths_absolute">[docs]</a><span class="k">def</span> <span class="nf">make_job_paths_absolute</span><span class="p">(</span><span class="n">job</span><span class="p">,</span> <span class="n">job_config_path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    It converts all the child paths of job to its absolute paths.</span>
+<span class="sd">    Note:</span>
+<span class="sd">        Parent Paths are not touched by this function, rather the parent config</span>
+<span class="sd">        paths are first made absolute and then merged into the user-specified job&#39;s config.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        job (protobuf msg): Job&#39;s Protobuf Message instance</span>
+<span class="sd">        job_config_path (str): Absolute path of job.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        job (protobuf msg) : Job&#39;s Protobuf Message instance with absolute child paths.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">path_attr_name</span> <span class="ow">in</span> <span class="n">main_paths</span><span class="p">:</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">HasField</span><span class="p">(</span><span class="n">path_attr_name</span><span class="p">)):</span>
             <span class="n">job</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="n">path_attr_name</span><span class="p">,</span>
@@ -229,67 +289,128 @@
         <span class="k">for</span> <span class="n">path_attr_name</span> <span class="ow">in</span> <span class="n">arg_paths</span><span class="p">:</span>
             <span class="k">if</span> <span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">HasField</span><span class="p">(</span><span class="n">path_attr_name</span><span class="p">)):</span>
                 <span class="n">job</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="n">path_attr_name</span><span class="p">,</span>
-                                          <span class="n">common</span><span class="o">.</span><span class="n">get_file_path</span><span class="p">(</span><span class="n">job_config_path</span><span class="p">,</span>
-                                                               <span class="n">job</span><span class="o">.</span><span class="n">config</span><span class="p">[</span>
-                                                                   <span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">__getattribute__</span><span class="p">(</span>
-                                                                   <span class="n">path_attr_name</span><span class="p">)))</span>
+                                            <span class="n">common</span><span class="o">.</span><span class="n">get_file_path</span><span class="p">(</span>
+                                                <span class="n">job_config_path</span><span class="p">,</span>
+                                                <span class="n">job</span><span class="o">.</span><span class="n">config</span><span class="p">[</span>
+                                                    <span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">__getattribute__</span><span class="p">(</span>
+                                                    <span class="n">path_attr_name</span><span class="p">)))</span>
+
+    <span class="k">return</span> <span class="n">job</span></div>
 
 
-    <span class="k">return</span> <span class="n">job</span>
+<div class="viewcode-block" id="make_arg_paths_absolute"><a class="viewcode-back" href="../../../details/example.html#expresso.utils.job_parser.make_arg_paths_absolute">[docs]</a><span class="k">def</span> <span class="nf">make_arg_paths_absolute</span><span class="p">(</span><span class="n">arg</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">arg_config_path</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    It converts all the child paths of arg to its absolute paths.</span>
+<span class="sd">    Note:</span>
+<span class="sd">        Parent Paths are not touched by this function, rather the parent config</span>
+<span class="sd">        paths are first made absolute and then merged into the user-specified arg&#39;s config.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        arg (protobuf msg): Arg&#39;s Protobuf Message instance</span>
+<span class="sd">        arg_config_path (str): Absolute path of arg(data/config).</span>
 
-<span class="k">def</span> <span class="nf">make_arg_paths_absolute</span><span class="p">(</span><span class="n">arg</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">arg_config_path</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        arg (protobuf msg) : Arg&#39;s Protobuf Message instance with absolute child paths.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">path_attr_name</span> <span class="ow">in</span> <span class="n">arg_paths</span><span class="p">:</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">HasField</span><span class="p">(</span><span class="n">path_attr_name</span><span class="p">)):</span>
             <span class="n">arg</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="n">path_attr_name</span><span class="p">,</span>
-                                      <span class="n">common</span><span class="o">.</span><span class="n">get_file_path</span><span class="p">(</span><span class="n">arg_config_path</span><span class="p">,</span>
-                                                           <span class="n">arg</span><span class="o">.</span><span class="n">__getattribute__</span><span class="p">(</span>
-                                                               <span class="n">path_attr_name</span><span class="p">)))</span>
+                            <span class="n">common</span><span class="o">.</span><span class="n">get_file_path</span><span class="p">(</span><span class="n">arg_config_path</span><span class="p">,</span>
+                                                 <span class="n">arg</span><span class="o">.</span><span class="n">__getattribute__</span><span class="p">(</span>
+                                                     <span class="n">path_attr_name</span><span class="p">)))</span>
 
-    <span class="k">return</span> <span class="n">arg</span>
+    <span class="k">return</span> <span class="n">arg</span></div>
 
-<span class="k">def</span> <span class="nf">get_category_path</span><span class="p">(</span><span class="n">arg</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">type_val</span><span class="o">=</span><span class="s1">&#39;data&#39;</span><span class="p">,</span>
+
+<div class="viewcode-block" id="get_category_path"><a class="viewcode-back" href="../../../details/example.html#expresso.utils.job_parser.get_category_path">[docs]</a><span class="k">def</span> <span class="nf">get_category_path</span><span class="p">(</span><span class="n">arg</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">type_val</span><span class="o">=</span><span class="s1">&#39;data&#39;</span><span class="p">,</span>
                       <span class="n">expresso_root</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    It returns relative path of the parent category in case of job/arg if present.</span>
+<span class="sd">    Both Job and Arg Protobuf messages are configurable and can be identified by the</span>
+<span class="sd">    relative paths. The relative path for the  :ref:`sample_job_config.prototxt` is</span>
+<span class="sd">    going to be as bellow :</span>
+
+<span class="sd">    .. code-block:</span>
+<span class="sd">        $expresso_root/storage/job/computer_vision/dataset/_to_hdf5/mnist_dataset</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        arg (protobuf msg): Job/Arg&#39;s Protobuf Message instance</span>
+<span class="sd">        type_val (str):  It is message type and belongs to one of job/data/config.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        category_path (str): Category path for the provided protobuf message.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">if</span> <span class="n">type_val</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span> <span class="ow">or</span> <span class="n">expresso_root</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span> \
             <span class="ow">or</span> <span class="n">arg</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Empty parameters to construct category path&#39;</span><span class="p">)</span>
 
+
     <span class="n">category_rel_path</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">cat</span> <span class="k">for</span> <span class="n">cat</span> <span class="ow">in</span> <span class="n">arg</span><span class="o">.</span><span class="n">category</span><span class="p">])</span>
     <span class="n">category_path</span> <span class="o">=</span> <span class="n">expresso_root</span> <span class="o">+</span> <span class="s1">&#39;/storage/&#39;</span> <span class="o">+</span> <span class="n">type_val</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> \
-      <span class="n">category_rel_path</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">arg</span><span class="o">.</span><span class="n">type</span>
+                    <span class="n">category_rel_path</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">arg</span><span class="o">.</span><span class="n">type</span>
     <span class="k">print</span> <span class="n">category_path</span>
-    <span class="k">if</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">category_path</span><span class="p">)):</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">category_path</span><span class="p">)):</span>
         <span class="k">return</span> <span class="n">category_path</span>
-    <span class="k">else</span> <span class="p">:</span> <span class="k">return</span> <span class="bp">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">None</span></div>
 
 
-<span class="k">def</span> <span class="nf">merge_with_parent_arg</span><span class="p">(</span><span class="n">arg</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">arg_type</span><span class="o">=</span><span class="s1">&#39;data&#39;</span><span class="p">,</span><span class="n">expresso_root</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="merge_with_parent_arg"><a class="viewcode-back" href="../../../details/example.html#expresso.utils.job_parser.merge_with_parent_arg">[docs]</a><span class="k">def</span> <span class="nf">merge_with_parent_arg</span><span class="p">(</span><span class="n">arg</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">arg_type</span><span class="o">=</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">expresso_root</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Merges parent argument configuration with current. This includes,</span>
+<span class="sd">    predefined tests, config structure, etc.  If you</span>
+<span class="sd">    want to skip the import, just overwrite the those parent path parameters with</span>
+<span class="sd">    exclude. Eg parent_config_path=&quot;exclude&quot;.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        arg (protobuf message): Arg&#39;s Protobuf Message instance</span>
+<span class="sd">        arg_type (str): Type of arg. It can be either config arg or data arg</span>
+<span class="sd">        expresso_root: Path of expresso&#39;s installation location. Mostly it is &#39;/usr/share/expresso&#39;</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        arg (protobuf message): Updated Arg&#39;s Protobuf Message instance with parent config information.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Step 1 : Get parent category path for Arg</span>
     <span class="n">parent_arg_path</span> <span class="o">=</span> <span class="n">get_category_path</span><span class="p">(</span><span class="n">arg</span><span class="o">=</span><span class="n">arg</span><span class="p">,</span> <span class="n">type_val</span><span class="o">=</span><span class="n">arg_type</span><span class="p">,</span>
-                                     <span class="n">expresso_root</span><span class="o">=</span><span class="n">expresso_root</span><span class="p">)</span>
+                                        <span class="n">expresso_root</span><span class="o">=</span><span class="n">expresso_root</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="n">parent_arg_path</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">):</span> <span class="k">return</span> <span class="n">arg</span><span class="p">;</span>
     <span class="n">parent_config_arg</span> <span class="o">=</span> <span class="n">expresso_pb2</span><span class="o">.</span><span class="n">Arg</span><span class="p">()</span>
-    <span class="n">text_format</span><span class="o">.</span><span class="n">Merge</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">parent_arg_path</span> <span class="o">+</span> <span class="s1">&#39;/main.prototxt&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span>
-                      <span class="n">message</span><span class="o">=</span><span class="n">parent_config_arg</span><span class="p">)</span>
+    <span class="n">text_format</span><span class="o">.</span><span class="n">Merge</span><span class="p">(</span>
+        <span class="n">text</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">parent_arg_path</span> <span class="o">+</span> <span class="s1">&#39;/main.prototxt&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span>
+        <span class="n">message</span><span class="o">=</span><span class="n">parent_config_arg</span><span class="p">)</span>
     <span class="n">parent_config_arg</span> <span class="o">=</span> <span class="n">make_arg_paths_absolute</span><span class="p">(</span><span class="n">arg</span><span class="o">=</span><span class="n">parent_config_arg</span><span class="p">,</span>
-                                             <span class="n">arg_config_path</span><span class="o">=</span><span class="n">parent_arg_path</span><span class="p">)</span>
+                                                <span class="n">arg_config_path</span><span class="o">=</span><span class="n">parent_arg_path</span><span class="p">)</span>
 
     <span class="c1"># Step 2 : Merging Category parent path for Arg</span>
     <span class="k">for</span> <span class="n">path_attr_name</span> <span class="ow">in</span> <span class="n">arg_paths</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">parent_config_arg</span><span class="o">.</span><span class="n">HasField</span><span class="p">(</span><span class="n">path_attr_name</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> \
-                <span class="n">arg</span><span class="o">.</span><span class="n">HasField</span><span class="p">(</span><span class="s1">&#39;parent_&#39;</span><span class="o">+</span><span class="n">path_attr_name</span><span class="p">):</span>
-            <span class="n">arg</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="s1">&#39;parent_&#39;</span><span class="o">+</span><span class="n">path_attr_name</span><span class="p">,</span>
+                <span class="n">arg</span><span class="o">.</span><span class="n">HasField</span><span class="p">(</span><span class="s1">&#39;parent_&#39;</span> <span class="o">+</span> <span class="n">path_attr_name</span><span class="p">):</span>
+            <span class="n">arg</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="s1">&#39;parent_&#39;</span> <span class="o">+</span> <span class="n">path_attr_name</span><span class="p">,</span>
                             <span class="n">parent_config_arg</span><span class="o">.</span><span class="n">__getattribute__</span><span class="p">(</span>
-                                                               <span class="n">path_attr_name</span><span class="p">))</span>
+                                <span class="n">path_attr_name</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">arg</span></div>
 
 
-    <span class="k">return</span> <span class="n">arg</span>
+<div class="viewcode-block" id="merge_with_parent_job"><a class="viewcode-back" href="../../../details/example.html#expresso.utils.job_parser.merge_with_parent_job">[docs]</a><span class="k">def</span> <span class="nf">merge_with_parent_job</span><span class="p">(</span><span class="n">job</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">expresso_root</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Merges parent job configuration with current. This includes,</span>
+<span class="sd">    predefined tests, config structure, etc. This facilitates reusability and</span>
+<span class="sd">    structuring of code such that repeated tasks are least required. If you</span>
+<span class="sd">    want to skip the import, just overwrite the those parent path parameters with</span>
+<span class="sd">    exclude. Eg parent_config_path=&quot;exclude&quot;.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        job (protobuf message): Job&#39;s Protobuf Message instance</span>
+<span class="sd">        expresso_root: Path of expresso&#39;s installation location. Mostly it is &#39;/usr/share/expresso&#39;</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        job (protobuf message): Updated Job&#39;s Protobuf Message instance with parent config information.</span>
 
 
-<span class="k">def</span> <span class="nf">merge_with_parent_job</span><span class="p">(</span><span class="n">job</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">expresso_root</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">parent_job_path</span> <span class="o">=</span> <span class="n">get_category_path</span><span class="p">(</span><span class="n">arg</span><span class="o">=</span><span class="n">job</span><span class="p">,</span> <span class="n">type_val</span><span class="o">=</span><span class="s1">&#39;job&#39;</span><span class="p">,</span>
-                                     <span class="n">expresso_root</span><span class="o">=</span><span class="n">expresso_root</span><span class="p">)</span>
+                                        <span class="n">expresso_root</span><span class="o">=</span><span class="n">expresso_root</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">parent_job_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
         <span class="c1"># Step 1 : Get parent category path for Job</span>
@@ -297,40 +418,56 @@
         <span class="n">text_format</span><span class="o">.</span><span class="n">Merge</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">parent_job_path</span> <span class="o">+</span> <span class="s1">&#39;/main.prototxt&#39;</span><span class="p">,</span>
                                     <span class="s1">&#39;r&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span>
                           <span class="n">message</span><span class="o">=</span><span class="n">parent_config_job</span><span class="p">)</span>
-        <span class="n">parent_config_job</span>  <span class="o">=</span> <span class="n">make_job_paths_absolute</span><span class="p">(</span><span class="n">job</span><span class="o">=</span><span class="n">parent_config_job</span><span class="p">,</span>
+        <span class="n">parent_config_job</span> <span class="o">=</span> <span class="n">make_job_paths_absolute</span><span class="p">(</span><span class="n">job</span><span class="o">=</span><span class="n">parent_config_job</span><span class="p">,</span>
                                                     <span class="n">job_config_path</span><span class="o">=</span><span class="n">parent_job_path</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">path_attr_name</span> <span class="ow">in</span> <span class="n">main_paths</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">parent_config_job</span><span class="o">.</span><span class="n">HasField</span><span class="p">(</span><span class="n">path_attr_name</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> \
-                    <span class="n">job</span><span class="o">.</span><span class="n">HasField</span><span class="p">(</span><span class="s1">&#39;parent_&#39;</span><span class="o">+</span><span class="n">path_attr_name</span><span class="p">):</span>
-                <span class="k">print</span> <span class="n">path_attr_name</span><span class="o">+</span><span class="s1">&#39;123&#39;</span>
-                <span class="n">job</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="s1">&#39;parent_&#39;</span><span class="o">+</span><span class="n">path_attr_name</span><span class="p">,</span>
+                    <span class="n">job</span><span class="o">.</span><span class="n">HasField</span><span class="p">(</span><span class="s1">&#39;parent_&#39;</span> <span class="o">+</span> <span class="n">path_attr_name</span><span class="p">):</span>
+                <span class="k">print</span> <span class="n">path_attr_name</span> <span class="o">+</span> <span class="s1">&#39;123&#39;</span>
+                <span class="n">job</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="s1">&#39;parent_&#39;</span> <span class="o">+</span> <span class="n">path_attr_name</span><span class="p">,</span>
                                 <span class="n">parent_config_job</span><span class="o">.</span><span class="n">__getattribute__</span><span class="p">(</span>
-                                                                   <span class="n">path_attr_name</span><span class="p">))</span>
-
+                                    <span class="n">path_attr_name</span><span class="p">))</span>
 
     <span class="c1"># Step 2 : Merging parent category path for Job</span>
 
 
-    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span><span class="n">data_arg</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">data</span><span class="p">):</span>
-        <span class="n">arg_val</span><span class="o">=</span><span class="n">merge_with_parent_arg</span><span class="p">(</span><span class="n">arg</span><span class="o">=</span><span class="n">job</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span>
-                                      <span class="n">arg_type</span><span class="o">=</span><span class="s1">&#39;data&#39;</span><span class="p">,</span><span class="n">expresso_root</span><span class="o">=</span><span class="n">expresso_root</span><span class="p">);</span>
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">data_arg</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">data</span><span class="p">):</span>
+        <span class="n">arg_val</span> <span class="o">=</span> <span class="n">merge_with_parent_arg</span><span class="p">(</span><span class="n">arg</span><span class="o">=</span><span class="n">job</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span>
+                                        <span class="n">arg_type</span><span class="o">=</span><span class="s1">&#39;data&#39;</span><span class="p">,</span>
+                                        <span class="n">expresso_root</span><span class="o">=</span><span class="n">expresso_root</span><span class="p">);</span>
         <span class="k">if</span> <span class="n">arg_val</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span> <span class="k">continue</span>
         <span class="n">job</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">CopyFrom</span><span class="p">(</span><span class="n">arg_val</span><span class="p">)</span>
 
-    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span><span class="n">data_arg</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">config</span><span class="p">):</span>
-        <span class="n">arg_val</span><span class="o">=</span><span class="n">merge_with_parent_arg</span><span class="p">(</span><span class="n">arg</span><span class="o">=</span><span class="n">job</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span>
-                                      <span class="n">arg_type</span><span class="o">=</span><span class="s1">&#39;config&#39;</span><span class="p">,</span><span class="n">expresso_root</span><span class="o">=</span><span class="bp">None</span><span class="p">);</span>
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">data_arg</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">config</span><span class="p">):</span>
+        <span class="n">arg_val</span> <span class="o">=</span> <span class="n">merge_with_parent_arg</span><span class="p">(</span><span class="n">arg</span><span class="o">=</span><span class="n">job</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span>
+                                        <span class="n">arg_type</span><span class="o">=</span><span class="s1">&#39;config&#39;</span><span class="p">,</span> <span class="n">expresso_root</span><span class="o">=</span><span class="bp">None</span><span class="p">);</span>
         <span class="k">if</span> <span class="n">arg_val</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span> <span class="k">continue</span>
         <span class="n">job</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">CopyFrom</span><span class="p">(</span><span class="n">arg_val</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">job</span>
+    <span class="k">return</span> <span class="n">job</span></div>
+
+<div class="viewcode-block" id="get_job"><a class="viewcode-back" href="../../../details/example.html#expresso.utils.job_parser.get_job">[docs]</a><span class="k">def</span> <span class="nf">get_job</span><span class="p">(</span><span class="n">expresso_root</span><span class="p">,</span><span class="n">job_config_path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    It parses the job config as per job_config_path and returns fully processed and validated Job&#39;s protobuf Message.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        expresso_root: Path of expresso&#39;s installation location. Mostly it is &#39;/usr/share/expresso&#39;</span>
+<span class="sd">        job_config_path (string): Path of the Job prototxt which needs to be fetched. Eg. :ref:`sample_job_config.prototxt`</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        job (protobuf msg): Job protobuf message with fields parsed and merged with its parent configs.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">job</span><span class="o">=</span><span class="n">parse_job</span><span class="p">(</span><span class="n">expresso_root</span><span class="o">=</span><span class="n">expresso_root</span><span class="p">,</span><span class="n">job_config_path</span><span class="o">=</span><span class="n">job_config_path</span><span class="p">)</span>
+    <span class="n">job</span><span class="o">=</span><span class="n">make_job_paths_absolute</span><span class="p">(</span><span class="n">job</span><span class="o">=</span><span class="n">job</span><span class="p">,</span><span class="n">job_config_path</span><span class="o">=</span><span class="n">job_config_path</span><span class="p">)</span>
+    <span class="n">job</span><span class="o">=</span><span class="n">merge_with_parent_job</span><span class="p">(</span><span class="n">job</span><span class="o">=</span><span class="n">job</span><span class="p">,</span><span class="n">expresso_root</span><span class="o">=</span><span class="n">expresso_root</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">job</span><span class="p">;</span></div>
 
 <span class="n">job</span> <span class="o">=</span> <span class="n">parse_job</span><span class="p">(</span><span class="n">expresso_root</span><span class="o">=</span><span class="s1">&#39;/usr/share/expresso&#39;</span><span class="p">,</span>
                 <span class="n">job_config_path</span><span class="o">=</span><span class="s1">&#39;/usr/share/expresso/proto/jobexample.prototxt&#39;</span><span class="p">)</span>
-<span class="n">job</span> <span class="o">=</span> <span class="n">make_job_paths_absolute</span><span class="p">(</span><span class="n">job</span><span class="p">,</span><span class="s1">&#39;/usr/share/expresso/proto&#39;</span><span class="p">)</span>
+<span class="n">job</span> <span class="o">=</span> <span class="n">make_job_paths_absolute</span><span class="p">(</span><span class="n">job</span><span class="p">,</span> <span class="s1">&#39;/usr/share/expresso/proto&#39;</span><span class="p">)</span>
 
-<span class="n">job</span> <span class="o">=</span> <span class="n">merge_with_parent_job</span><span class="p">(</span><span class="n">job</span><span class="o">=</span><span class="n">job</span><span class="p">,</span><span class="n">expresso_root</span><span class="o">=</span><span class="s1">&#39;/usr/share/expresso&#39;</span><span class="p">)</span>
+<span class="n">job</span> <span class="o">=</span> <span class="n">merge_with_parent_job</span><span class="p">(</span><span class="n">job</span><span class="o">=</span><span class="n">job</span><span class="p">,</span> <span class="n">expresso_root</span><span class="o">=</span><span class="s1">&#39;/usr/share/expresso&#39;</span><span class="p">)</span>
 <span class="k">print</span> <span class="n">job</span><span class="p">;</span>
 </pre></div>
 

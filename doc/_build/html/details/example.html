@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Job Parser &mdash; Expresso beta documentation</title>
+  <title>Utils &mdash; Expresso beta documentation</title>
   
 
   
@@ -81,8 +81,10 @@
             
             
                 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="">Job Parser</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#intro">Intro</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Utils</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-expresso.utils.job_parser">Job Parser</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-expresso.utils.graph_parser">Graph Parser</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#common">Common</a></li>
 </ul>
 </li>
 </ul>
@@ -115,7 +117,7 @@
   <ul class="wy-breadcrumbs">
     <li><a href="../index.html">Docs</a> &raquo;</li>
       
-    <li>Job Parser</li>
+    <li>Utils</li>
       <li class="wy-breadcrumbs-aside">
         
           
@@ -129,251 +131,377 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-expresso">
-<span id="job-parser"></span><h1>Job Parser<a class="headerlink" href="#module-expresso" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="intro">
-<h2>Intro<a class="headerlink" href="#intro" title="Permalink to this headline">¶</a></h2>
-<p>Hello</p>
-</div>
-<span class="target" id="module-expresso.example"></span><p>Example Google style docstrings.</p>
-<p>This module demonstrates documentation as specified by the <a class="reference external" href="http://google.github.io/styleguide/pyguide.html">Google Python
-Style Guide</a>. Docstrings may extend over multiple lines. Sections are created
-with a section header and a colon followed by a block of indented text.</p>
-<dl class="docutils">
-<dt>Example:</dt>
-<dd><p class="first">Examples can be given using either the <code class="docutils literal"><span class="pre">Example</span></code> or <code class="docutils literal"><span class="pre">Examples</span></code>
-sections. Sections support any reStructuredText formatting, including
-literal blocks:</p>
-<div class="last highlight-python"><div class="highlight"><pre>$ python example_google.py
+  <div class="section" id="utils">
+<h1>Utils<a class="headerlink" href="#utils" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-expresso.utils.job_parser">
+<span id="job-parser"></span><h2>Job Parser<a class="headerlink" href="#module-expresso.utils.job_parser" title="Permalink to this headline">¶</a></h2>
+<p>This module deals with job related manipulations. In expresso, job is
+understood as a subtask which needs to be performed to get expected result.
+Job config is a file which gives you complete information related to this
+subtask.
+For the bellow documented functions, the job_config_path will be as follow :</p>
+<div class="literal-block-wrapper container" id="sample-job-config-prototxt">
+<div class="code-block-caption"><span class="caption-text">sample_job_config.prototxt</span><a class="headerlink" href="#sample-job-config-prototxt" title="Permalink to this code">¶</a></div>
+<div class="highlight-proto"><div class="highlight"><pre><span class="n">name</span><span class="o">:</span> <span class="s">&quot;job1&quot;</span>
+<span class="n">type</span><span class="o">:</span> <span class="s">&quot;mnist_to_hdf5&quot;</span>
+<span class="n">category</span><span class="o">:</span> <span class="s">&quot;computer_vision&quot;</span>
+<span class="n">category</span><span class="o">:</span> <span class="s">&quot;dataset&quot;</span>
+<span class="n">category</span><span class="o">:</span> <span class="s">&quot;to_hdf5&quot;</span>
+<span class="n">desc</span><span class="o">:</span> <span class="s">&quot;Importing mnist dataset in hdf5&quot;</span>
+<span class="n">data</span> <span class="p">{</span>
+    <span class="n">name</span><span class="o">:</span> <span class="s">&quot;mnist_import&quot;</span>
+    <span class="n">type</span><span class="o">:</span> <span class="s">&quot;mnist_import&quot;</span>
+    <span class="n">category</span><span class="o">:</span> <span class="s">&quot;machine_learning&quot;</span>
+    <span class="n">desc</span><span class="o">:</span> <span class="s">&quot;Import mnist data from net&quot;</span>
+    <span class="n">config_path</span><span class="o">:</span> <span class="s">&quot;./data_config.prototxt&quot;</span>
+<span class="p">}</span>
+<span class="n">log_path</span><span class="o">:</span> <span class="s">&quot;log&quot;</span>
 </pre></div>
 </div>
-</dd>
-</dl>
-<p>Section breaks are created by resuming unindented text. Section breaks
-are also implicitly created anytime a new section starts.</p>
-<dl class="docutils">
-<dt>Attributes:</dt>
-<dd><p class="first">module_level_variable1 (int): Module level variables may be documented in
-either the <code class="docutils literal"><span class="pre">Attributes</span></code> section of the module docstring, or in an
-inline docstring immediately following the variable.</p>
-<p class="last">Either form is acceptable, but the two should not be mixed. Choose
-one convention to document module level variables and be consistent
-with it.</p>
-</dd>
-<dt>Todo:</dt>
-<dd><ul class="first last simple">
-<li>For module TODOs</li>
-<li>You have to also use <code class="docutils literal"><span class="pre">sphinx.ext.todo</span></code> extension</li>
-</ul>
-</dd>
-</dl>
-<dl class="class">
-<dt id="expresso.example.ExampleClass">
-<em class="property">class </em><code class="descclassname">expresso.example.</code><code class="descname">ExampleClass</code><span class="sig-paren">(</span><em>param1</em>, <em>param2</em>, <em>param3</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/expresso/example.html#ExampleClass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#expresso.example.ExampleClass" title="Permalink to this definition">¶</a></dt>
-<dd><p>The summary line for a class docstring should fit on one line.</p>
-<p>If the class has public attributes, they may be documented here
-in an <code class="docutils literal"><span class="pre">Attributes</span></code> section and follow the same formatting as a
-function&#8217;s <code class="docutils literal"><span class="pre">Args</span></code> section. Alternatively, attributes may be documented
-inline with the attribute&#8217;s declaration (see __init__ method below).</p>
-<p>Properties created with the <code class="docutils literal"><span class="pre">&#64;property</span></code> decorator should be documented
-in the property&#8217;s getter method.</p>
-<p>Attribute and property types &#8211; if given &#8211; should be specified according
-to <a class="reference external" href="https://www.python.org/dev/peps/pep-0484/">PEP 484</a>, though <a class="reference external" href="https://www.python.org/dev/peps/pep-0484/">PEP 484</a> conformance isn&#8217;t required or enforced.</p>
-<dl class="docutils">
-<dt>Attributes:</dt>
-<dd>attr1 (str): Description of <cite>attr1</cite>.
-attr2 (Optional[int]): Description of <cite>attr2</cite>.</dd>
-</dl>
-<dl class="attribute">
-<dt id="expresso.example.ExampleClass.attr3">
-<code class="descname">attr3</code><em class="property"> = None</em><a class="headerlink" href="#expresso.example.ExampleClass.attr3" title="Permalink to this definition">¶</a></dt>
-<dd><p>Doc comment <em>inline</em> with attribute</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="expresso.example.ExampleClass.attr4">
-<code class="descname">attr4</code><em class="property"> = None</em><a class="headerlink" href="#expresso.example.ExampleClass.attr4" title="Permalink to this definition">¶</a></dt>
-<dd><p>List[str]: Doc comment <em>before</em> attribute, with type specified</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="expresso.example.ExampleClass.attr5">
-<code class="descname">attr5</code><em class="property"> = None</em><a class="headerlink" href="#expresso.example.ExampleClass.attr5" title="Permalink to this definition">¶</a></dt>
-<dd><p>Optional[str]: Docstring <em>after</em> attribute, with type specified.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="expresso.example.ExampleClass.example_method">
-<code class="descname">example_method</code><span class="sig-paren">(</span><em>param1</em>, <em>param2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/expresso/example.html#ExampleClass.example_method"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#expresso.example.ExampleClass.example_method" title="Permalink to this definition">¶</a></dt>
-<dd><p>Class methods are similar to regular functions.</p>
-<dl class="docutils">
-<dt>Note:</dt>
-<dd>Do not include the <cite>self</cite> parameter in the <code class="docutils literal"><span class="pre">Args</span></code> section.</dd>
-<dt>Args:</dt>
-<dd>param1: The first parameter.
-param2: The second parameter.</dd>
-<dt>Returns:</dt>
-<dd>True if successful, False otherwise.</dd>
-</dl>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="expresso.example.ExampleClass.readonly_property">
-<code class="descname">readonly_property</code><a class="headerlink" href="#expresso.example.ExampleClass.readonly_property" title="Permalink to this definition">¶</a></dt>
-<dd><p>str: Properties should be documented in their getter method.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="expresso.example.ExampleClass.readwrite_property">
-<code class="descname">readwrite_property</code><a class="headerlink" href="#expresso.example.ExampleClass.readwrite_property" title="Permalink to this definition">¶</a></dt>
-<dd><p>List[str]: Properties with both a getter and setter should only
-be documented in their getter method.</p>
-<p>If the setter method contains notable behavior, it should be
-mentioned here.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="exception">
-<dt id="expresso.example.ExampleError">
-<em class="property">exception </em><code class="descclassname">expresso.example.</code><code class="descname">ExampleError</code><span class="sig-paren">(</span><em>msg</em>, <em>code</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/expresso/example.html#ExampleError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#expresso.example.ExampleError" title="Permalink to this definition">¶</a></dt>
-<dd><p>Exceptions are documented in the same way as classes.</p>
-<p>The __init__ method may be documented in either the class level
-docstring, or as a docstring on the __init__ method itself.</p>
-<p>Either form is acceptable, but the two should not be mixed. Choose one
-convention to document the __init__ method and be consistent with it.</p>
-<dl class="docutils">
-<dt>Note:</dt>
-<dd>Do not include the <cite>self</cite> parameter in the <code class="docutils literal"><span class="pre">Args</span></code> section.</dd>
-<dt>Args:</dt>
-<dd>msg (str): Human readable string describing the exception.
-code (Optional[int]): Error code.</dd>
-<dt>Attributes:</dt>
-<dd>msg (str): Human readable string describing the exception.
-code (int): Exception error code.</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="expresso.example.example_generator">
-<code class="descclassname">expresso.example.</code><code class="descname">example_generator</code><span class="sig-paren">(</span><em>n</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/expresso/example.html#example_generator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#expresso.example.example_generator" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generators have a <code class="docutils literal"><span class="pre">Yields</span></code> section instead of a <code class="docutils literal"><span class="pre">Returns</span></code> section.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>n (int): The upper limit of the range to generate, from 0 to <cite>n</cite> - 1.</dd>
-<dt>Yields:</dt>
-<dd>int: The next number in the range of 0 to <cite>n</cite> - 1.</dd>
-<dt>Examples:</dt>
-<dd><p class="first">Examples should be written in doctest format, and should illustrate how
-to use the function.</p>
-<div class="last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">([</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">example_generator</span><span class="p">(</span><span class="mi">4</span><span class="p">)])</span>
-<span class="go">[0, 1, 2, 3]</span>
-</pre></div>
 </div>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="expresso.example.module_level_function">
-<code class="descclassname">expresso.example.</code><code class="descname">module_level_function</code><span class="sig-paren">(</span><em>param1</em>, <em>param2=None</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/expresso/example.html#module_level_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#expresso.example.module_level_function" title="Permalink to this definition">¶</a></dt>
-<dd><p>This is an example of a module level function.</p>
-<p>Function parameters should be documented in the <code class="docutils literal"><span class="pre">Args</span></code> section. The name
-of each parameter is required. The type and description of each parameter
-is optional, but should be included if not obvious.</p>
-<p>Parameter types &#8211; if given &#8211; should be specified according to
-<a class="reference external" href="https://www.python.org/dev/peps/pep-0484/">PEP 484</a>, though <a class="reference external" href="https://www.python.org/dev/peps/pep-0484/">PEP 484</a> conformance isn&#8217;t required or enforced.</p>
-<p>If *args or **kwargs are accepted,
-they should be listed as <code class="docutils literal"><span class="pre">*args</span></code> and <code class="docutils literal"><span class="pre">**kwargs</span></code>.</p>
-<p>The format for a parameter is:</p>
-<div class="highlight-python"><div class="highlight"><pre>name (type): description
-    The description may span multiple lines. Following
-    lines should be indented. The &quot;(type)&quot; is optional.
-
-    Multiple paragraphs are supported in parameter
-    descriptions.
-</pre></div>
-</div>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><p class="first">param1 (int): The first parameter.
-param2 (Optional[str]): The second parameter. Defaults to None.</p>
-<blockquote>
-<div>Second line of description should be indented.</div></blockquote>
-<p class="last"><a href="#id1"><span class="problematic" id="id2">*</span></a>args: Variable length argument list.
-<a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs: Arbitrary keyword arguments.</p>
-</dd>
-<dt>Returns:</dt>
-<dd><p class="first">bool: True if successful, False otherwise.</p>
-<p>The return type is optional and may be specified at the beginning of
-the <code class="docutils literal"><span class="pre">Returns</span></code> section followed by a colon.</p>
-<p>The <code class="docutils literal"><span class="pre">Returns</span></code> section may span multiple lines and paragraphs.
-Following lines should be indented to match the first line.</p>
-<p>The <code class="docutils literal"><span class="pre">Returns</span></code> section supports any reStructuredText formatting,
-including literal blocks:</p>
-<div class="last highlight-python"><div class="highlight"><pre><span class="p">{</span>
-    <span class="s1">&#39;param1&#39;</span><span class="p">:</span> <span class="n">param1</span><span class="p">,</span>
-    <span class="s1">&#39;param2&#39;</span><span class="p">:</span> <span class="n">param2</span>
+<p>The job config is parsed according to the structure defined by
+protocol as shown bellow. It is  mandatory to specify the highlighted fields in
+the job config file. The parent paths are supposed to be imported from the
+pre-defined parent modules available for users. These parent modules
+are present for both job and its arguments. They lay foundation for
+structure of user specified job config files in prototxt format. Each parent module
+can be uniquely identified by (type,category).</p>
+<div class="literal-block-wrapper container" id="expresso-proto">
+<div class="code-block-caption"><span class="caption-text">expresso.proto</span><a class="headerlink" href="#expresso-proto" title="Permalink to this code">¶</a></div>
+<div class="highlight-proto"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44</pre></div></td><td class="code"><div class="highlight"><pre><span class="kd">message</span> <span class="nc">Job</span> <span class="p">{</span>
+  <span class="k">optional</span> <span class="kt">string</span> <span class="na">name</span><span class="o">=</span><span class="mi">25</span><span class="p">;</span>
+<span class="hll">  <span class="k">optional</span> <span class="kt">string</span> <span class="na">type</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span> <span class="c1">//IO,Train,Benchmark,Transform</span>
+</span>  <span class="k">optional</span> <span class="kt">string</span> <span class="na">desc</span><span class="o">=</span><span class="mi">2</span><span class="p">;</span><span class="c1">// Description of Job Conf</span>
+  <span class="k">optional</span> <span class="kt">string</span> <span class="na">doc_path</span><span class="o">=</span><span class="mi">3</span><span class="p">;</span><span class="c1">// Documentation of Job</span>
+  <span class="k">repeated</span> <span class="kt">string</span> <span class="na">category</span><span class="o">=</span><span class="mi">4</span><span class="p">;</span>
+  <span class="k">repeated</span> <span class="n">Arg</span> <span class="na">data</span><span class="o">=</span><span class="mi">5</span><span class="p">;</span><span class="c1">//Data related Arguments</span>
+  <span class="k">repeated</span> <span class="n">Arg</span> <span class="na">config</span><span class="o">=</span><span class="mi">6</span><span class="p">;</span><span class="c1">//Config related Arguments</span>
+  <span class="k">optional</span> <span class="kt">string</span> <span class="na">script_path</span><span class="o">=</span><span class="mi">7</span><span class="p">;</span><span class="c1">// Path of main script to be executed</span>
+  <span class="k">optional</span> <span class="kt">string</span> <span class="na">depends_on</span> <span class="o">=</span><span class="mi">8</span><span class="p">;</span><span class="c1">// Dependended Jobs</span>
+  <span class="k">optional</span> <span class="kt">string</span> <span class="na">pre_exec_rules_path</span><span class="o">=</span><span class="mi">9</span><span class="p">;</span><span class="c1">// rules to be checked just before job executes</span>
+  <span class="k">optional</span> <span class="kt">string</span> <span class="na">post_exec_rules_path</span><span class="o">=</span><span class="mi">10</span><span class="p">;</span><span class="c1">//rules to be checked just after the job is executed.</span>
+  <span class="k">optional</span> <span class="kt">string</span> <span class="na">prereq_install_path</span><span class="o">=</span><span class="mi">11</span><span class="p">;</span><span class="c1">// Install all the pre-requisites required for job</span>
+  <span class="k">optional</span> <span class="kt">string</span> <span class="na">prereq_check_path</span><span class="o">=</span><span class="mi">12</span><span class="p">;</span><span class="c1">// Check for pre-requisites</span>
+  <span class="k">optional</span> <span class="kt">string</span> <span class="na">log_path</span><span class="o">=</span><span class="mi">13</span><span class="p">;</span><span class="c1">// Location where job logs will be kept</span>
+<span class="hll">  <span class="k">optional</span> <span class="kt">string</span> <span class="na">job_config_path</span><span class="o">=</span><span class="mi">14</span><span class="p">;</span><span class="c1">//Necessary to specify Inputs and Outputs properly</span>
+</span>  <span class="k">optional</span> <span class="kt">string</span> <span class="na">job_config_proto_path</span><span class="o">=</span><span class="mi">15</span><span class="p">;</span><span class="c1">//Necessary to specify Inputs and Outputs properly</span>
+  <span class="k">optional</span> <span class="kt">string</span> <span class="na">parent_doc_path</span><span class="o">=</span><span class="mi">16</span><span class="p">;</span><span class="c1">// Documentation of Job</span>
+  <span class="k">optional</span> <span class="kt">string</span> <span class="na">parent_job_config_path</span><span class="o">=</span><span class="mi">17</span><span class="p">;</span>
+  <span class="k">optional</span> <span class="kt">string</span> <span class="na">parent_job_config_proto_path</span><span class="o">=</span><span class="mi">18</span><span class="p">;</span>
+  <span class="k">optional</span> <span class="kt">string</span> <span class="na">parent_pre_exec_rules_path</span><span class="o">=</span><span class="mi">19</span><span class="p">;</span><span class="c1">// rules to be checked just before job executes</span>
+  <span class="k">optional</span> <span class="kt">string</span> <span class="na">parent_post_exec_rules_path</span><span class="o">=</span><span class="mi">20</span><span class="p">;</span><span class="c1">//rules to be checked just after the job is executed.</span>
+  <span class="k">optional</span> <span class="kt">string</span> <span class="na">parent_prereq_install_path</span><span class="o">=</span><span class="mi">21</span><span class="p">;</span><span class="c1">// Install all the pre-requisites required for job</span>
+  <span class="k">optional</span> <span class="kt">string</span> <span class="na">parent_prereq_check_path</span><span class="o">=</span><span class="mi">22</span><span class="p">;</span><span class="c1">// Check for pre-requisites</span>
+  <span class="k">optional</span> <span class="kt">string</span> <span class="na">parent_log_path</span><span class="o">=</span><span class="mi">23</span><span class="p">;</span><span class="c1">// Location where job logs will be kept</span>
+  <span class="k">optional</span> <span class="kt">string</span> <span class="na">parent_script_path</span><span class="o">=</span><span class="mi">24</span><span class="p">;</span><span class="c1">//Parent Script path</span>
+<span class="p">}</span>
+<span class="kd">message</span> <span class="nc">Arg</span> <span class="p">{</span>
+  <span class="k">optional</span> <span class="kt">string</span> <span class="na">name</span> <span class="o">=</span><span class="mi">15</span><span class="p">;</span><span class="c1">//Name oof the job by which it should appear</span>
+<span class="hll">  <span class="k">optional</span> <span class="kt">string</span> <span class="na">type</span> <span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="c1">// Name of the data/config</span>
+</span>  <span class="k">repeated</span> <span class="kt">string</span> <span class="na">category</span><span class="o">=</span><span class="mi">2</span><span class="p">;</span><span class="c1">// Type of data - hdf5,etc,</span>
+  <span class="k">optional</span> <span class="kt">string</span> <span class="na">desc</span><span class="o">=</span><span class="mi">3</span><span class="p">;</span><span class="c1">// Description of Arg</span>
+  <span class="k">optional</span> <span class="kt">string</span> <span class="na">doc_path</span><span class="o">=</span><span class="mi">4</span><span class="p">;</span><span class="c1">// Extended Description in rst</span>
+  <span class="k">optional</span> <span class="kt">string</span> <span class="na">config_proto_path</span><span class="o">=</span><span class="mi">5</span><span class="p">;</span><span class="c1">//Required only if type=custom,else overridden</span>
+<span class="hll">  <span class="k">optional</span> <span class="kt">string</span> <span class="na">config_path</span><span class="o">=</span><span class="mi">6</span><span class="p">;</span><span class="c1">// Path of config for Data/Config use cases.</span>
+</span>  <span class="k">optional</span> <span class="kt">string</span> <span class="na">pre_exec_rules_path</span><span class="o">=</span><span class="mi">7</span><span class="p">;</span><span class="c1">// rules to be checked just before job executes</span>
+  <span class="k">optional</span> <span class="kt">string</span> <span class="na">post_exec_rules_path</span><span class="o">=</span><span class="mi">8</span><span class="p">;</span><span class="c1">//rules to be checked just after the job is executed.</span>
+  <span class="k">optional</span> <span class="kt">string</span> <span class="na">parent_doc_path</span><span class="o">=</span><span class="mi">9</span><span class="p">;</span><span class="c1">// Extended Description in rst</span>
+  <span class="k">optional</span> <span class="kt">string</span> <span class="na">parent_config_path</span><span class="o">=</span><span class="mi">10</span><span class="p">;</span><span class="c1">//Config of parent to be overwritten by child</span>
+  <span class="k">optional</span> <span class="kt">string</span> <span class="na">parent_config_proto_path</span><span class="o">=</span><span class="mi">11</span><span class="p">;</span><span class="c1">//Required only if type=custom,else overridden</span>
+  <span class="k">optional</span> <span class="kt">string</span> <span class="na">parent_pre_exec_rules_path</span><span class="o">=</span><span class="mi">12</span><span class="p">;</span><span class="c1">//Not to be set by user</span>
+  <span class="k">optional</span> <span class="kt">string</span> <span class="na">parent_post_exec_rules_path</span><span class="o">=</span><span class="mi">13</span><span class="p">;</span><span class="c1">//Not to be set by user</span>
+  <span class="k">optional</span> <span class="kt">string</span> <span class="na">io_type</span><span class="o">=</span><span class="mi">14</span><span class="p">[</span><span class="k">default</span><span class="o">=</span><span class="s">&#39;input&#39;</span><span class="p">];</span>
 <span class="p">}</span>
 </pre></div>
+</td></tr></table></div>
 </div>
-</dd>
-<dt>Raises:</dt>
-<dd><dl class="first docutils">
-<dt>AttributeError: The <code class="docutils literal"><span class="pre">Raises</span></code> section is a list of all exceptions</dt>
-<dd>that are relevant to the interface.</dd>
-</dl>
-<p class="last">ValueError: If <cite>param2</cite> is equal to <cite>param1</cite>.</p>
-</dd>
-</dl>
+<dl class="function">
+<dt id="expresso.utils.job_parser.get_category_path">
+<code class="descclassname">expresso.utils.job_parser.</code><code class="descname">get_category_path</code><span class="sig-paren">(</span><em>arg=None</em>, <em>type_val='data'</em>, <em>expresso_root=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/expresso/utils/job_parser.html#get_category_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#expresso.utils.job_parser.get_category_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>It returns relative path of the parent category in case of job/arg if present.
+Both Job and Arg Protobuf messages are configurable and can be identified by the
+relative paths. The relative path for the  <a class="reference internal" href="#sample-job-config-prototxt"><span>sample_job_config.prototxt</span></a> is
+going to be as bellow :</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>arg</strong> (<em>protobuf msg</em>) &#8211; Job/Arg&#8217;s Protobuf Message instance</li>
+<li><strong>type_val</strong> (<em>str</em>) &#8211; It is message type and belongs to one of job/data/config.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Category path for the provided protobuf message.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">category_path (str)</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
-<dl class="data">
-<dt id="expresso.example.module_level_variable2">
-<code class="descclassname">expresso.example.</code><code class="descname">module_level_variable2</code><em class="property"> = 98765</em><a class="headerlink" href="#expresso.example.module_level_variable2" title="Permalink to this definition">¶</a></dt>
-<dd><p>int: Module level variable documented inline.</p>
-<p>The docstring may span multiple lines. The type may optionally be specified
-on the first line, separated by a colon.</p>
+<dl class="function">
+<dt id="expresso.utils.job_parser.get_job">
+<code class="descclassname">expresso.utils.job_parser.</code><code class="descname">get_job</code><span class="sig-paren">(</span><em>expresso_root</em>, <em>job_config_path</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/expresso/utils/job_parser.html#get_job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#expresso.utils.job_parser.get_job" title="Permalink to this definition">¶</a></dt>
+<dd><p>It parses the job config as per job_config_path and returns fully processed and validated Job&#8217;s protobuf Message.
+:param expresso_root: Path of expresso&#8217;s installation location. Mostly it is &#8216;/usr/share/expresso&#8217;
+:param job_config_path: Path of the Job prototxt which needs to be fetched. Eg. <a class="reference internal" href="#sample-job-config-prototxt"><span>sample_job_config.prototxt</span></a>
+:type job_config_path: string</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Job protobuf message with fields parsed and merged with its parent configs.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">job (protobuf msg)</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
-<span class="target" id="module-expresso.utils.job_parser"></span><dl class="function">
+<dl class="function">
+<dt id="expresso.utils.job_parser.make_arg_paths_absolute">
+<code class="descclassname">expresso.utils.job_parser.</code><code class="descname">make_arg_paths_absolute</code><span class="sig-paren">(</span><em>arg=None</em>, <em>arg_config_path=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/expresso/utils/job_parser.html#make_arg_paths_absolute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#expresso.utils.job_parser.make_arg_paths_absolute" title="Permalink to this definition">¶</a></dt>
+<dd><p>It converts all the child paths of arg to its absolute paths.
+.. note:</p>
+<div class="highlight-python"><div class="highlight"><pre>Parent Paths are not touched by this function, rather the parent config
+paths are first made absolute and then merged into the user-specified arg&#39;s config.
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>arg</strong> (<em>protobuf msg</em>) &#8211; Arg&#8217;s Protobuf Message instance</li>
+<li><strong>arg_config_path</strong> (<em>str</em>) &#8211; Absolute path of arg(data/config).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Arg&#8217;s Protobuf Message instance with absolute child paths.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">arg (protobuf msg)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="expresso.utils.job_parser.make_job_paths_absolute">
+<code class="descclassname">expresso.utils.job_parser.</code><code class="descname">make_job_paths_absolute</code><span class="sig-paren">(</span><em>job</em>, <em>job_config_path</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/expresso/utils/job_parser.html#make_job_paths_absolute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#expresso.utils.job_parser.make_job_paths_absolute" title="Permalink to this definition">¶</a></dt>
+<dd><p>It converts all the child paths of job to its absolute paths.
+.. note:</p>
+<div class="highlight-python"><div class="highlight"><pre>Parent Paths are not touched by this function, rather the parent config
+paths are first made absolute and then merged into the user-specified job&#39;s config.
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>job</strong> (<em>protobuf msg</em>) &#8211; Job&#8217;s Protobuf Message instance</li>
+<li><strong>job_config_path</strong> (<em>str</em>) &#8211; Absolute path of job.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Job&#8217;s Protobuf Message instance with absolute child paths.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">job (protobuf msg)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="expresso.utils.job_parser.merge_with_parent_arg">
+<code class="descclassname">expresso.utils.job_parser.</code><code class="descname">merge_with_parent_arg</code><span class="sig-paren">(</span><em>arg=None</em>, <em>arg_type='data'</em>, <em>expresso_root=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/expresso/utils/job_parser.html#merge_with_parent_arg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#expresso.utils.job_parser.merge_with_parent_arg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Merges parent argument configuration with current. This includes,
+predefined tests, config structure, etc.  If you
+want to skip the import, just overwrite the those parent path parameters with
+exclude. Eg parent_config_path=&#8221;exclude&#8221;.
+:param arg: Arg&#8217;s Protobuf Message instance
+:type arg: protobuf message
+:param arg_type: Type of arg. It can be either config arg or data arg
+:type arg_type: str
+:param expresso_root: Path of expresso&#8217;s installation location. Mostly it is &#8216;/usr/share/expresso&#8217;</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Updated Arg&#8217;s Protobuf Message instance with parent config information.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">arg (protobuf message)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="expresso.utils.job_parser.merge_with_parent_job">
+<code class="descclassname">expresso.utils.job_parser.</code><code class="descname">merge_with_parent_job</code><span class="sig-paren">(</span><em>job=None</em>, <em>expresso_root=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/expresso/utils/job_parser.html#merge_with_parent_job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#expresso.utils.job_parser.merge_with_parent_job" title="Permalink to this definition">¶</a></dt>
+<dd><p>Merges parent job configuration with current. This includes,
+predefined tests, config structure, etc. This facilitates reusability and
+structuring of code such that repeated tasks are least required. If you
+want to skip the import, just overwrite the those parent path parameters with
+exclude. Eg parent_config_path=&#8221;exclude&#8221;.
+:param job: Job&#8217;s Protobuf Message instance
+:type job: protobuf message
+:param expresso_root: Path of expresso&#8217;s installation location. Mostly it is &#8216;/usr/share/expresso&#8217;</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Updated Job&#8217;s Protobuf Message instance with parent config information.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">job (protobuf message)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
 <dt id="expresso.utils.job_parser.parse_job">
 <code class="descclassname">expresso.utils.job_parser.</code><code class="descname">parse_job</code><span class="sig-paren">(</span><em>expresso_root=None</em>, <em>job_config_path=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/expresso/utils/job_parser.html#parse_job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#expresso.utils.job_parser.parse_job" title="Permalink to this definition">¶</a></dt>
 <dd><p>It parses the job prototxt file and returns a protobuf message
 initialized with the input job prototxt file.
-literal blocks:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="k">print</span> <span class="n">expresso</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">parse_job</span><span class="p">(</span><span class="n">job_config_path</span><span class="o">=</span><span class="s1">&#39;my_job_config_path.prototxt&#39;</span><span class="p">)</span>
+literal blocks</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">print</span> <span class="n">expresso</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">parse_job</span><span class="p">(</span><span class="n">job_config_path</span><span class="o">=</span><span class="s1">&#39;sample_job_config.prototxt&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>expresso_root(not required): Path or expresso root directory, mostly
-it is
-&#8216;/usr/share/expresso&#8217;
-job_config_path: Path of the Job prototxt which needs to be parsed</dd>
-<dt>Returns:</dt>
-<dd>Job protobuf message with fields parsed as per the job prototxt
-provided</dd>
-<dt>literal blocks::</dt>
-<dd><p class="first">name: &#8220;job1&#8221;
-type: &#8220;mnist_to_hdf5&#8221;
-category: &#8220;computer_vision&#8221;
-category: &#8220;dataset&#8221;
-category: &#8220;to_hdf5&#8221;
-desc: &#8220;Importing mnist dataset in hdf5&#8221;
-data {</p>
-<blockquote>
-<div>name: &#8220;mnist_import&#8221;
-type: &#8220;mnist_import&#8221;
-category: &#8220;machine_learning&#8221;
-desc: &#8220;Import mnist data from net&#8221;
-config_path: &#8221;./data_config.prototxt&#8221;</div></blockquote>
-<p class="last">}
-log_path: &#8220;log&#8221;</p>
-</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>expresso_root</strong> (<em>string</em>) &#8211; Path or expresso root directory, mostly it is &#8216;/usr/share/expresso&#8217;</li>
+<li><strong>job_config_path</strong> (<em>string</em>) &#8211; Path of the Job prototxt which needs to be parsed. Eg. <a class="reference internal" href="#sample-job-config-prototxt"><span>sample_job_config.prototxt</span></a></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Job protobuf message with fields parsed as per the job prototxt
+provided</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">job (protobuf msg)</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
+</div>
+<div class="section" id="module-expresso.utils.graph_parser">
+<span id="graph-parser"></span><h2>Graph Parser<a class="headerlink" href="#module-expresso.utils.graph_parser" title="Permalink to this headline">¶</a></h2>
+<p>This module deals with job related manipulations. In expresso, job is
+understood as a subtask which needs to be performed to get expected result.
+Job config is a file which gives you complete information related to this
+subtask.</p>
+<dl class="function">
+<dt id="expresso.utils.graph_parser.create_dag">
+<code class="descclassname">expresso.utils.graph_parser.</code><code class="descname">create_dag</code><span class="sig-paren">(</span><em>expresso_root=None</em>, <em>project_path=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/expresso/utils/graph_parser.html#create_dag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#expresso.utils.graph_parser.create_dag" title="Permalink to this definition">¶</a></dt>
+<dd><p>It creates a Schedule Graph Object which consists of Job&#8217;s execution related information.
+:param expresso_root: Path of expresso&#8217;s installation location. Mostly it is &#8216;/usr/share/expresso&#8217;
+:type expresso_root: str
+:param project_path: Path of the project folder. It consists of job related subfolders in it.
+:type project_path: str</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="docutils">
+<dt>Parsed Protobuf message capturing all jobs in</dt>
+<dd>project with its dependency.</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">schedule_graph (protobuf msg)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="expresso.utils.graph_parser.graph_to_json">
+<code class="descclassname">expresso.utils.graph_parser.</code><code class="descname">graph_to_json</code><span class="sig-paren">(</span><em>schedule_graph</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/expresso/utils/graph_parser.html#graph_to_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#expresso.utils.graph_parser.graph_to_json" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>schedule_graph</strong> &#8211; ScheduleGraph Protobuf Message Object</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">ScheduleGraph&#8217;s JSON object</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">schedule_graph_json</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="expresso.utils.graph_parser.validate_dag">
+<code class="descclassname">expresso.utils.graph_parser.</code><code class="descname">validate_dag</code><span class="sig-paren">(</span><em>schedule_graph</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/expresso/utils/graph_parser.html#validate_dag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#expresso.utils.graph_parser.validate_dag" title="Permalink to this definition">¶</a></dt>
+<dd><p>It validates the attributes of Graph and also looks into the cyclic
+dependencies in it. It raises an exception in case of DAG Validation Faliure.
+:param schedule_graph: ScheduleGraph Protobuf Message Object</p>
+</dd></dl>
+
+</div>
+<div class="section" id="common">
+<h2>Common<a class="headerlink" href="#common" title="Permalink to this headline">¶</a></h2>
+<p>understood as a subtask which needs to be performed to get expected result.
+Job config is a file which gives you complete information related to this
+subtask.</p>
+</div>
 </div>
 
 

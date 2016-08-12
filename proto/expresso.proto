@@ -45,3 +45,18 @@ message Arg {
   optional string parent_post_exec_rules_path=13;//Not to be set by user
   optional string io_type=14[default='input'];
 }
+
+message ScheduleGraph{
+  optional string name=1;
+  repeated ScheduleJob schedule_job=2;
+}
+
+message ScheduleJob{
+  optional string name=1;
+  repeated string depends_on=2;
+  optional Job job=3;
+  optional string status=4;
+  optional string start_time=5;
+  optional string end_time=6;
+  optional int32 retry=7;
+}
