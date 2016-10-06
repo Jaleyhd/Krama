@@ -1,0 +1,944 @@
+<!doctype html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Graph Visualization</title>
+    <link rel="stylesheet" href="http://localhost:8081/css/demo.css">
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script src="http://localhost:8081/node_modules/dagre-d3/build/dist/dagre-d3.js"></script>
+    <script src="http://localhost:8081/node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
+    <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+    <script src="localhost:8081/socket.io/socket.io.js"></script>
+    <!-- Bootstrap Core CSS -->
+    <link href="../public/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- MetisMenu CSS -->
+    <link href="../public/vendor/metisMenu/metisMenu.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../public/css/sb-admin-2.css" rel="stylesheet">
+    <!-- Morris Charts CSS -->
+    <link href="../public/vendor/morrisjs/morris.css" rel="stylesheet">
+    <!-- Custom Fonts -->
+    <link href="../public/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <!--link href="http://localhost:8081/css/exectab.css" rel="stylesheet" type="text/css"-->
+    <link href='http://fonts.googleapis.com/css?family=PT+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="http://localhost:8081/css/reset.css">
+    <!-- CSS reset -->
+    <link rel="stylesheet" href="http://localhost:8081/css/style.css">
+    <!-- Resource style -->
+    <link rel="stylesheet" href="css/reset.css">
+    <!-- CSS reset -->
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Resource style -->
+    <script src="http://localhost:8081/js/modernizr.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/list.js/1.2.0/list.min.js"></script>
+    <!-- Modernizr -->
+    <style id="css">
+    /* This sets the color for "TK" nodes to a light blue green. */
+    
+    g.run > rect {
+        fill: #00aaf0;
+    }
+    
+    g.success > rect {
+        fill: #99dd66;
+    }
+    
+    g.fail > rect {
+        fill: #ff2f00;
+    }
+    
+    g.unknown > rect {
+        fill: #cccccc;
+    }
+    
+    g.cancel > rect {
+        fill: #ffffff;
+    }
+    
+    text {
+        font-weight: 300;
+        font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+        font-size: 18px;
+        color: rgb(255, 255, 255);
+    }
+    
+    .node rect {
+        stroke: #fff;
+        fill: #fff;
+        stroke-width: 1.5px;
+        color: rgb(255, 255, 255);
+    }
+    
+    .edgePath path {
+        stroke: #666;
+        stroke-width: 2px;
+    }
+    /*clickable starts*/
+    .clickable
+    {
+        cursor: pointer;
+    }
+
+    .clickable .glyphicon
+    {
+        background: rgba(0, 0, 0, 0.15);
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 4px
+    }
+
+    .panel-heading span
+    {
+        margin-top: -23px;
+        font-size: 15px;
+        margin-right: -9px;
+    }
+    a.clickable { color: inherit; }
+    a.clickable:hover { text-decoration:none; }    
+    /*Clickable ends*/
+
+    /*SEARCH FORM*/
+    .search-form {
+        border-radius: 30px 0px 0px 30px;
+        /*border-radius:Top-left, Top-right, Bottom-right, Bottom-left;*/
+    }
+    /*to cange only one form and not all give unique class name like  class="search-form" */
+     .search-btn {
+        border-radius: 0px 30px 30px 0px;
+        cursor:pointer;
+    }
+
+    </style>
+</head>
+
+<body>
+    <div id="wrapper">
+        <!-- Navigation -->
+        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0;background-color:rgb(70,70,70)">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" style="color:rgb(185,185,185)" href="index.html">Expresso v2.0</a>
+            </div>
+            <!-- /.navbar-header -->
+            <ul class="nav navbar-top-links navbar-right">
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                        <i class="fa fa-envelope fa-fw"></i> <i class="fa fa-caret-down"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-messages">
+                        <li>
+                            <a href="#">
+                                <div>
+                                    <strong>John Smith</strong>
+                                    <span class="pull-right text-muted">
+                                        <em>Yesterday</em>
+                                    </span>
+                                </div>
+                                <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque eleifend...</div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="#">
+                                <div>
+                                    <strong>John Smith</strong>
+                                    <span class="pull-right text-muted">
+                                        <em>Yesterday</em>
+                                    </span>
+                                </div>
+                                <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque eleifend...</div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="#">
+                                <div>
+                                    <strong>John Smith</strong>
+                                    <span class="pull-right text-muted">
+                                        <em>Yesterday</em>
+                                    </span>
+                                </div>
+                                <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque eleifend...</div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a class="text-center" href="#">
+                                <strong>Read All Messages</strong>
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                    <!-- /.dropdown-messages -->
+                </li>
+                <!-- /.dropdown -->
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                        <i class="fa fa-tasks fa-fw"></i> <i class="fa fa-caret-down"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-tasks">
+                        <li>
+                            <a href="#">
+                                <div>
+                                    <p>
+                                        <strong>Task 1</strong>
+                                        <span class="pull-right text-muted">40% Complete</span>
+                                    </p>
+                                    <div class="progress progress-striped active">
+                                        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 40%">
+                                            <span class="sr-only">40% Complete (success)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="#">
+                                <div>
+                                    <p>
+                                        <strong>Task 2</strong>
+                                        <span class="pull-right text-muted">20% Complete</span>
+                                    </p>
+                                    <div class="progress progress-striped active">
+                                        <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 20%">
+                                            <span class="sr-only">20% Complete</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="#">
+                                <div>
+                                    <p>
+                                        <strong>Task 3</strong>
+                                        <span class="pull-right text-muted">60% Complete</span>
+                                    </p>
+                                    <div class="progress progress-striped active">
+                                        <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%">
+                                            <span class="sr-only">60% Complete (warning)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="#">
+                                <div>
+                                    <p>
+                                        <strong>Task 4</strong>
+                                        <span class="pull-right text-muted">80% Complete</span>
+                                    </p>
+                                    <div class="progress progress-striped active">
+                                        <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width: 80%">
+                                            <span class="sr-only">80% Complete (danger)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a class="text-center" href="#">
+                                <strong>See All Tasks</strong>
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                    <!-- /.dropdown-tasks -->
+                </li>
+                <!-- /.dropdown -->
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                        <i class="fa fa-bell fa-fw"></i> <i class="fa fa-caret-down"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-alerts">
+                        <li>
+                            <a href="#">
+                                <div>
+                                    <i class="fa fa-comment fa-fw"></i> New Comment
+                                    <span class="pull-right text-muted small">4 minutes ago</span>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="#">
+                                <div>
+                                    <i class="fa fa-twitter fa-fw"></i> 3 New Followers
+                                    <span class="pull-right text-muted small">12 minutes ago</span>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="#">
+                                <div>
+                                    <i class="fa fa-envelope fa-fw"></i> Message Sent
+                                    <span class="pull-right text-muted small">4 minutes ago</span>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="#">
+                                <div>
+                                    <i class="fa fa-tasks fa-fw"></i> New Task
+                                    <span class="pull-right text-muted small">4 minutes ago</span>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="#">
+                                <div>
+                                    <i class="fa fa-upload fa-fw"></i> Server Rebooted
+                                    <span class="pull-right text-muted small">4 minutes ago</span>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a class="text-center" href="#">
+                                <strong>See All Alerts</strong>
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                    <!-- /.dropdown-alerts -->
+                </li>
+                <!-- /.dropdown -->
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                        <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-user">
+                        <li><a href="#"><i class="fa fa-user fa-fw"></i> User Profile</a>
+                        </li>
+                        <li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>
+                        </li>
+                        <li class="divider"></li>
+                        <li><a href="login.html"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+                        </li>
+                    </ul>
+                    <!-- /.dropdown-user -->
+                </li>
+                <!-- /.dropdown -->
+            </ul>
+            <!-- /.navbar-top-links -->
+            <div class="navbar-default sidebar" role="navigation">
+                <div class="sidebar-nav navbar-collapse">
+                    <ul class="nav" id="side-menu">
+                        <li class="sidebar-search">
+                            <div class="input-group custom-search-form">
+                                <input type="text" class="form-control" placeholder="Search...">
+                                <span class="input-group-btn">
+                                <button class="btn btn-default" type="button">
+                                    <i class="fa fa-search"></i>
+                                </button>
+                            </span>
+                            </div>
+                            <!-- /input-group -->
+                        </li>
+                        <li>
+                            <a href="index.html"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
+                        </li>
+                        <li>
+                            <a href="#"><i class="fa fa-sitemap fa-fw"></i>Executions<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+                                <li>
+                                    <a href="flot.html">Flot Charts</a>
+                                </li>
+                                <li>
+                                    <a href="morris.html">Morris.js Charts</a>
+                                </li>
+                            </ul>
+                            <!-- /.nav-second-level -->
+                        </li>
+                        <li>
+                            <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i>Visualization<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+                                <li>
+                                    <a href="flot.html">Flot Charts</a>
+                                </li>
+                                <li>
+                                    <a href="morris.html">Morris.js Charts</a>
+                                </li>
+                            </ul>
+                            <!-- /.nav-second-level -->
+                        </li>
+                        <li>
+                            <a href="tables.html"><i class="fa fa-table fa-fw"></i>Trending</a>
+                        </li>
+                        <li>
+                            <a href="forms.html"><i class="fa fa-edit fa-fw"></i>Getting Started</a>
+                        </li>
+                        <li>
+                            <a href="forms.html"><i class="fa fa-edit fa-fw"></i>Tutorials</a>
+                        </li>
+                        <li>
+                            <a href="forms.html"><i class="fa fa-edit fa-fw"></i>Documentation</a>
+                        </li>
+                        <li>
+                            <a href="#"><i class="fa fa-wrench fa-fw"></i> Settings<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+                                <li>
+                                    <a href="panels-wells.html">Panels and Wells</a>
+                                </li>
+                                <li>
+                                    <a href="buttons.html">Buttons</a>
+                                </li>
+                                <li>
+                                    <a href="notifications.html">Notifications</a>
+                                </li>
+                                <li>
+                                    <a href="typography.html">Typography</a>
+                                </li>
+                                <li>
+                                    <a href="icons.html"> Icons</a>
+                                </li>
+                                <li>
+                                    <a href="grid.html">Grid</a>
+                                </li>
+                            </ul>
+                            <!-- /.nav-second-level -->
+                        </li>
+                    </ul>
+                </div>
+                <!-- /.sidebar-collapse -->
+            </div>
+            <!-- /.navbar-static-side -->
+        </nav>
+        <div id="page-wrapper">
+            <div class="row">
+                <div ng-app="myApp" ng-controller="myCtrl" ng-model='mycustomdata'>
+                    <div class="cd-tabs">
+                        <nav>
+                            <ul class="cd-tabs-navigation">
+                                <li><a data-content="inbox" class="selected" href="#0">executions</a></li>
+                                <li><a data-content="new" href="#0">projects</a></li>
+                                <li><a data-content="gallery" href="#0">Gallery</a></li>
+                                <li><a data-content="store" href="#0">Store</a></li>
+                                <li><a data-content="settings" href="#0">Settings</a></li>
+                                <li><a data-content="trash" href="#0">Trash</a></li>
+                            </ul>
+                            <!-- cd-tabs-navigation -->
+                        </nav>
+                        <ul class="cd-tabs-content">
+                            <li data-content="inbox" class="selected">
+                                    <span id="project_name">
+                                        <dagre-chart myvar='mycustomdata'></dagre-chart>
+                            </li>
+                            <li data-content="new">
+                                <div class="input-group">
+                                    <input type="text" class="form-control search-form" placeholder="Search">
+                                    <span class="input-group-btn"><button type="submit" class="btn btn-primary search-btn" data-target="#search-form" name="q"><i class="fa fa-search"><!--FONT AWESOME font @ "http://fortawesome.github.io/Font-Awesome/" --></i>
+                                    </button></span>
+                                </div>
+                                <p>New Lorem ipsum dolor sit amet, consectetur adipisicing elit. Non a voluptatibus, ex odit totam cumque nihil eos asperiores ea, labore rerum. Doloribus tenetur quae impedit adipisci, laborum dolorum eaque ratione quaerat, eos dicta consequuntur atque ex facere voluptate cupiditate incidunt.</p>
+                                <p>New Lorem ipsum dolor sit amet, consectetur adipisicing elit. Non a voluptatibus, ex odit totam cumque nihil eos asperiores ea, labore rerum. Doloribus tenetur quae impedit adipisci, laborum dolorum eaque ratione quaerat, eos dicta consequuntur atque ex facere voluptate cupiditate incidunt.</p>
+                            </li>
+                            <li data-content="gallery">
+                                <p>Gallery Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cumque tenetur aut, cupiditate, libero eius rerum incidunt dolorem quo in officia.</p>
+                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. A ipsa vero, culpa doloremque voluptatum consectetur mollitia, atque expedita unde excepturi id, molestias maiores delectus quos molestiae. Ab iure provident adipisci eveniet quisquam ratione libero nam inventore error pariatur optio facilis assumenda sint atque cumque, omnis perspiciatis. Maxime minus quam voluptatum provident aliquam voluptatibus vel rerum. Soluta nulla tempora aspernatur maiores! Animi accusamus officiis neque exercitationem dolore ipsum maiores delectus asperiores reprehenderit pariatur placeat, quaerat sed illum optio qui enim odio temporibus, nulla nihil nemo quod dicta consectetur obcaecati vel. Perspiciatis animi corrupti quidem fugit deleniti, atque mollitia labore excepturi ut.</p>
+                            </li>
+                            <li data-content="store">
+                                <p>Store Lorem ipsum dolor sit amet, consectetur adipisicing elit. Earum recusandae rem animi accusamus quisquam reprehenderit sed voluptates, numquam, quibusdam velit dolores repellendus tempora corrupti accusantium obcaecati voluptate totam eveniet laboriosam?</p>
+                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eligendi, enim, pariatur. Ab assumenda, accusantium! Consequatur magni placeat quae eos dicta, cum expedita sunt facilis est impedit possimus dolorum sequi nostrum nobis sit praesentium molestias nulla laudantium fugit corporis nam ut saepe harum ipsam? Debitis accusantium, omnis repudiandae modi, distinctio illo voluptatibus aperiam odio veritatis, quam perferendis eaque ullam. Temporibus tempore ad voluptates explicabo ea sit deleniti ipsum quos dolores tempora odio, ab corporis molestiae, eaque optio, perferendis! Cumque libero quia modi! Totam magni rerum id iusto explicabo distinctio, magnam, labore sed nemo expedita velit quam, perspiciatis non temporibus sit minus voluptatum. Iste, cumque sunt suscipit facere iusto asperiores, ullam dolorum excepturi quidem ea quibusdam deserunt illo. Nesciunt voluptates repellat ipsam.</p>
+                            </li>
+                            <li data-content="settings">
+                                <p>Settings Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laboriosam nam magni, ullam nihil a suscipit, ex blanditiis, adipisci tempore deserunt maiores. Nostrum officia, ratione enim eaque nihil quis ea, officiis iusto repellendus. Animi illo in hic, maxime deserunt unde atque a nesciunt? Non odio quidem deserunt animi quod impedit nam, voluptates eum, voluptate consequuntur sit vel, et exercitationem sint atque dolores libero dolorem accusamus ratione iste tenetur possimus excepturi. Accusamus vero, dignissimos beatae tempore mollitia officia voluptate quam animi vitae.</p>
+                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Similique ipsam eum reprehenderit minima at sapiente ad ipsum animi doloremque blanditiis unde omnis, velit molestiae voluptas placeat qui provident ab facilis.</p>
+                            </li>
+                            <li data-content="trash">
+                                <p>Trash Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio itaque a iure nostrum animi praesentium, numquam quidem, nemo, voluptatem, aspernatur incidunt. Fugiat aspernatur excepturi fugit aut, dicta reprehenderit temporibus, nobis harum consequuntur quo sed, illum.</p>
+                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Minima doloremque optio tenetur, natus voluptatum error vel dolorem atque perspiciatis aliquam nemo id libero dicta est saepe laudantium provident tempore ipsa, accusamus similique laborum, consequatur quia, aut non maiores. Consectetur minus ipsum aliquam pariatur dolorem rerum laudantium minima perferendis in vero voluptatem suscipit cum labore nemo explicabo, itaque nobis debitis molestias officiis? Impedit corporis voluptates reiciendis deleniti, magnam, fuga eveniet! Velit ipsa quo labore molestias mollitia, quidem, alias nisi architecto dolor aliquid qui commodi tempore deleniti animi repellat delectus hic. Alias obcaecati fuga assumenda nihil aliquid sed vero, modi, voluptatem? Vitae voluptas aperiam nostrum quo harum numquam earum facilis sequi. Labore maxime laboriosam omnis delectus odit harum recusandae sint incidunt, totam iure commodi ducimus similique doloremque! Odio quaerat dolorum, alias nihil quam iure delectus repellendus modi cupiditate dolore atque quasi obcaecati quis magni excepturi vel, non nemo consequatur, mollitia rerum amet in. Nesciunt placeat magni, provident tempora possimus ut doloribus ullam!</p>
+                            </li>
+                        </ul>
+                        <!-- cd-tabs-content -->
+                    </div>
+                    <!-- cd-tabs -->
+                </div>
+            </div>
+            <!-- /.row -->
+            <!-- /.row -->
+            <!-- /.row -->
+        </div>
+        <!-- /#page-wrapper -->
+    </div>
+    <!-- /#wrapper -->
+    <!-- jQuery -->
+    <script src="../public/vendor/jquery/jquery.min.js"></script>
+    <!-- Bootstrap Core JavaScript -->
+    <script src="../public/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="../public/vendor/metisMenu/metisMenu.min.js"></script>
+    <!-- Morris Charts JavaScript -->
+    <script src="../public/vendor/raphael/raphael.min.js"></script>
+    <script src="../public/vendor/morrisjs/morris.min.js"></script>
+    <script src="../public/data/morris-data.js"></script>
+    <!-- Custom Theme JavaScript -->
+    <script src="../public/js/sb-admin-2.js"></script>
+    <script id="js">
+    /*clickable starts*/
+    $(document).on('click', '.panel-heading span.clickable', function (e) {
+    var $this = $(this);
+    if (!$this.hasClass('panel-collapsed')) {
+        $this.parents('.panel').find('.panel-body').slideUp();
+        $this.addClass('panel-collapsed');
+        $this.find('i').removeClass('glyphicon-minus').addClass('glyphicon-plus');
+    } else {
+        $this.parents('.panel').find('.panel-body').slideDown();
+        $this.removeClass('panel-collapsed');
+        $this.find('i').removeClass('glyphicon-plus').addClass('glyphicon-minus');
+    }
+});
+$(document).on('click', '.panel div.clickable', function (e) {
+    var $this = $(this);
+    if (!$this.hasClass('panel-collapsed')) {
+        $this.parents('.panel').find('.panel-body').slideUp();
+        $this.addClass('panel-collapsed');
+        $this.find('i').removeClass('glyphicon-minus').addClass('glyphicon-plus');
+    } else {
+        $this.parents('.panel').find('.panel-body').slideDown();
+        $this.removeClass('panel-collapsed');
+        $this.find('i').removeClass('glyphicon-plus').addClass('glyphicon-minus');
+    }
+});
+$(document).ready(function () {
+    $('.panel-heading span.clickable').click();
+    $('.panel div.clickable').click();
+});
+/*clickable ends*/
+    var statusvaldict={0:'fail',1:'success',2:'run',3:'cancel',4:'unknown',5:'unknown'};
+
+    var app = angular.module('myApp', []);
+    app.factory('socket', ['$rootScope', function($rootScope) {
+        var socket = io.connect();
+
+        return {
+            on: function(eventName, callback) {
+                socket.on(eventName, callback);
+            },
+            emit: function(eventName, data) {
+                socket.emit(eventName, data);
+            }
+        };
+    }]);
+
+
+    app.controller('myCtrl', function($scope, $http, socket) {
+        $scope.mycustomdata = JSON.parse('[]')
+
+        socket.on('trigger', function(data) {
+            console.log(data)
+            $scope.$apply(function() {
+                $scope.mycustomdata = data
+            });
+        });
+
+        $http.get("/execdata")
+            .then(function(response) {
+                $scope.mycustomdata = response.data;
+            });
+
+        $scope.increaseCounter = function() {
+            //$scope.mycustomdata=JSON.parse('{}')
+            $http.get("/execdata")
+                .then(function(response) {
+                    $scope.mycustomdata = response.data;
+                });
+
+        };
+        $scope.$watch('mycustomdata', function(newValue, oldValue) {
+            console.log('newvalue', newValue)
+        })
+
+    })
+
+
+    app.directive('dagreChart', function() {
+        output=new Object()
+        function processrows(rows){
+            output= d3.nest()
+            .key(function(d){return String(d.exec_id)+'_'+String(d.project_name)})
+            .entries(rows)
+            return output
+        }
+        function funclink($scope, $element, $attrs) {
+            function removeprevious(){
+                d3.select($element[0]).selectAll('div').remove();
+            }
+
+
+            function creategraphs(data_updated){
+                data_updated=processrows(data_updated)
+                console.log(data_updated)
+                for (var idx in data_updated){
+                    var hook = d3.select($element[0])
+                    .append('div')
+                    .attr('id','id_'+data_updated[idx].key)
+                    createexecgraph(hook,data_updated[idx])
+
+            }
+            function createexecgraph(hook,data){
+                                    console.log(data.key)
+                var panel = hook
+                    .append('div')
+                    .attr('class','panel panel-info')
+                var panelheading = panel
+                    .append('div')
+                    .attr('class','panel-heading clickable panel-collapsed')
+                    .append('div')
+                    .attr('class','row')
+
+
+                var panelheadingcontent=panelheading
+                    .append('div')
+                    .attr('class','col-md-1')
+                    .attr('style','margin-top:5px')                    
+                    .append('h1')
+                    .attr('class','panel-title')
+                    .attr('style','font-size:125%')
+                    .text(data.key.split('_')[0])
+
+                var panelheadingcontent=panelheading
+                    .append('div')
+                    .attr('class','col-md-7')
+                    .attr('style','margin-top:5px')                    
+                    .append('h1')
+                    .attr('class','panel-title')
+                    .attr('style','font-size:125%')
+                    .text(data.key.split('_').slice(1).join('_'))
+                    .append('span')
+                    .attr('style','float:right;margin-top:5px;font-style:italic;font-size:75%')
+                    .text('12:30 pm')
+
+                panelheading
+                    .append('div')
+                    .attr('class','col-md-3')
+                    .append('div')
+                    .attr('class','progress')
+                    .attr('style','margin-bottom:0;height:24px;margin-top:3px')
+                    .append('div')
+                    .attr('class','progress-bar progress-bar-success progress-bar-striped active')
+                    .attr('role','progress-bar')
+                    .attr('aria-valuenow','40')
+                    .attr('aria-valuemin','0')
+                    .attr('aria-valuemax','100')
+                    .attr('style','width:100%')
+                    .text('5/5 jobs complete')
+
+
+                var panelright=panelheading
+                    .append('div')
+                    .attr('class','col-md-1')
+                    .append('i')
+                    .attr('class','glyphicon glyphicon-minus')
+
+
+                var panelbody = panel
+                    .append('div')
+                    .attr('class','panel-body')
+                    .attr('id','collapsable')
+                updategraph(panelbody,data.values)
+                for(idx in data.values){
+                    var inputgroup=panelbody
+                        .append('div')
+                        .attr('class','input-group')
+                    inputgroup
+                        .append('input')
+                        .attr('type','text')
+                        .attr('class','form-control search-form')
+                        .attr('placeholder','Search')
+                    inputgroup
+                        .append('span')
+                        .attr('input-group-btn')
+                        .append('button')
+                        .attr('type','submit')
+                        .attr('class','btn btn-primary search-btn')
+                        .attr('data-target','#search-form')
+                        .attr('name','q')
+                        .append('i')
+                        .attr('class','fa fa-search')
+                }
+
+
+                }
+
+                d3.select($element[0]).selectAll('#collapsable').each(function(d){
+                    //d3.select(this).attr('style','display:none')
+                })
+            }
+
+            function updategraphs(data_updated,oldValue){
+                console.log('data_updated')
+                console.log(data_updated)
+                old_data=processrows(oldValue)
+                data_updated=processrows(data_updated)
+                oldkeys=[]
+                for (idx in old_data){
+                    //oldkeys.push(old_data[idx].key)
+                }
+                var hook
+                for (var idx in data_updated){
+                    //if(oldkeys.indexOf(data_updated[idx].key)==-1){
+                    if(!d3.select('#id_'+String(data_updated[idx].key)).empty()){
+                        //updategraph(data_updated[idx])
+                        hook = d3.select('#id_'+String(data_updated[idx].key))
+                        for(ridx in data_updated[idx].values){
+                            hook.selectAll('.nodes > g').each(function(data){
+                                d=d3.select(this)
+                                textval=d.select('g').select('text').select('tspan').text()
+                                if(String(textval)==data_updated[idx].values[ridx].job_name){
+                                    d.attr('class','node '+statusvaldict[data_updated[idx].values[ridx].status])
+                                }
+                            })
+                        }
+
+                    }else{
+
+                        hook = d3.select($element[0])
+                        .insert('div',':first-child')
+                        .attr('id','id_'+data_updated[idx].key)
+
+                        //createexecgraph(hook,data_updated[idx])
+                        data=data_updated[idx]
+                        //creategraph start
+                        var panel = hook
+                            .append('div')
+                            .attr('class','panel panel-info')
+                        var panelheading = panel
+                            .append('div')
+                            .attr('class','panel-heading clickable panel-collapsed')
+                            .append('div')
+                            .attr('class','row')
+
+
+                        var panelheadingcontent=panelheading
+                            .append('div')
+                            .attr('class','col-md-1')
+                            .attr('style','margin-top:5px')                    
+                            .append('h1')
+                            .attr('class','panel-title')
+                            .attr('style','font-size:125%')
+                            .text(data.key.split('_')[0])
+
+                        var panelheadingcontent=panelheading
+                            .append('div')
+                            .attr('class','col-md-7')
+                            .attr('style','margin-top:5px')                    
+                            .append('h1')
+                            .attr('class','panel-title')
+                            .attr('style','font-size:125%')
+                            .text(data.key.split('_').slice(1).join('_'))
+                            .append('span')
+                            .attr('style','float:right;margin-top:5px;font-style:italic;font-size:75%')
+                            .text('12:30 pm')
+
+                        panelheading
+                            .append('div')
+                            .attr('class','col-md-3')
+                            .append('div')
+                            .attr('class','progress')
+                            .attr('style','margin-bottom:0;height:24px;margin-top:3px')
+                            .append('div')
+                            .attr('class','progress-bar progress-bar-success progress-bar-striped active')
+                            .attr('role','progress-bar')
+                            .attr('aria-valuenow','40')
+                            .attr('aria-valuemin','0')
+                            .attr('aria-valuemax','100')
+                            .attr('style','width:100%')
+                            .text('5/5 jobs complete')
+
+
+                        var panelright=panelheading
+                            .append('div')
+                            .attr('class','col-md-1')
+                            .append('i')
+                            .attr('class','glyphicon glyphicon-minus')
+
+
+                        var panelbody = panel
+                            .append('div')
+                            .attr('class','panel-body')
+                            .attr('id','collapsable')
+                        updategraph(panelbody,data.values)
+                            var inputgroup=panelbody
+                                .append('div')
+                                .attr('class','input-group')
+                            inputgroup
+                                .append('input')
+                                .attr('type','text')
+                                .attr('class','form-control search-form')
+                                .attr('placeholder','Search')
+                            inputgroup
+                                .append('span')
+                                .attr('class','input-group-btn')
+                                .append('button')
+                                .attr('type','submit')
+                                .attr('class','btn btn-primary search-btn')
+                                .attr('data-target','#search-form')
+                                .attr('name','q')
+                                .append('i')
+                                .attr('class','fa fa-search')
+                        for(idx in data.values){
+                            var jobpanel=panelbody
+                            .append('div')
+                            .attr('class','panel ')
+                            jobpanelheading=jobpanel
+                                .append('div')
+                                .attr('class','panel-heading clickable panel-collapsed')
+                                .append('div')
+                                .attr('class','row')
+                            var jobpanelheadingcontent=jobpanelheading
+                                .append('div')
+                                .attr('class','col-md-1')
+                                .attr('style','margin-top:5px')                    
+                                .append('h1')
+                                .attr('class','panel-title')
+                                .attr('style','font-size:125%')
+                                .text(idx)
+
+                            var jobpanelheadingcontent=jobpanelheading
+                                .append('div')
+                                .attr('class','col-md-7')
+                                .attr('style','margin-top:5px')                    
+                                .append('h1')
+                                .attr('class','panel-title')
+                                .attr('style','font-size:125%')
+                                .text(data.values[idx].job_name)
+                                .append('span')
+                                .attr('style','float:right;margin-top:5px;font-style:italic;font-size:75%')
+                                .text('12:30 pm')
+
+                            jobpanelheading
+                                .append('div')
+                                .attr('class','col-md-3')
+                                .append('div')
+                                .attr('class','progress')
+                                .attr('style','margin-bottom:0;height:24px;margin-top:3px')
+                                .append('div')
+                                .attr('class','progress-bar progress-bar-success progress-bar-striped active')
+                                .attr('role','progress-bar')
+                                .attr('aria-valuenow','40')
+                                .attr('aria-valuemin','0')
+                                .attr('aria-valuemax','100')
+                                .attr('style','width:100%')
+                                .text('5/5 jobs complete')
+                            var jobpanelright=jobpanelheading
+                                .append('div')
+                                .attr('class','col-md-1')
+                                .append('i')
+                                .attr('class','glyphicon glyphicon-minus')
+
+                            }
+
+                        }
+
+                }
+
+            }
+
+
+            function updategraph(panelbody,data) {
+                console.log(data)
+                // Create the input graph
+                var svg = panelbody
+                    .append('svg')
+                    .attr("id", "svg-canvas")
+                    .attr("width", 960)
+                    .attr("height", 600)
+                svgGroup = svg.append("g");
+
+                var g = new dagreD3.graphlib.Graph()
+                    .setGraph({})
+                    .setDefaultEdgeLabel(function() {
+                        return {};
+                    });
+
+                node_dict = JSON.parse('{}')
+                console.log('reached here!!!')
+                
+                for (i = 0; i < data.length; i++) {
+                    node_dict[data[i].job_name] = i
+                    if ('status' in data[i]) {
+                        status = statusvaldict[data[i].status]
+                        }
+                    g.setNode(i, {
+                        label: data[i].job_name,
+                        class: status
+                    })
+                    }
+                console.log(node_dict)
+                console.log(g)
+                g.nodes().forEach(function(v) {
+                    var node = g.node(v);
+                    // Round the corners of the nodes
+                    node.rx = node.ry = 5;
+                });
+                for (i = 0; i < data.length; i++) {
+                    depends_on=data[i].depends_on.split(',')
+                    console.log(depends_on)
+                    for (j = 0; j < depends_on.length; j++) {
+                        if (depends_on[j] != "") {
+                            g.setEdge(node_dict[depends_on[j]], i);
+                        }
+                    }
+                }
+                console.log(g)
+                // Create the renderer
+                var render = new dagreD3.render();
+                // Run the renderer. This is what draws the final graph.
+                render(svgGroup, g);
+                // Center the graph
+                var xCenterOffset = (svg.attr("width") - g.graph().width) / 2;
+                svgGroup.attr("transform", "translate(" + xCenterOffset + ", 20)");
+                svg.attr("height", g.graph().height + 40);
+                svg.attr("style", "color:white")
+            }
+            removeprevious()
+            creategraphs($scope.myvar)
+            console.debug($scope)
+            $scope.$watch('myvar', function(newValue, oldValue) {
+                console.log('triggered')
+                if(oldValue.length==0){
+                removeprevious()
+                creategraphs($scope.myvar)
+                }else{
+                updategraphs($scope.myvar,oldValue)                    
+                }
+            })
+
+        }
+        return {
+            link: funclink,
+            restrict: 'E',
+            scope: {
+                myvar: '=myvar'
+            },
+            replace: true
+
+        };
+    });
+    </script>
+    <script src="http://localhost:8081/js/demo.js"></script>
+    <script src="http://localhost:8081/js/main.js"></script>
+    <script src="js/jquery-2.1.1.js"></script>
+    <script src="js/main.js"></script>
+    <!-- Resource jQuery -->
+    <!-- Resource jQuery -->
+</body>

@@ -1,0 +1,5 @@
+  name: "mnist_import"
+  type: "mnist_import"
+  category: "machine_learning"
+  desc: "Import mnist data from net"
+  config_path: "./data_config.prototxt"

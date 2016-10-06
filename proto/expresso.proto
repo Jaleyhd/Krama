@@ -59,4 +59,6 @@ message ScheduleJob{
   optional string start_time=5;
   optional string end_time=6;
   optional int32 retry=7;
+  optional string pid=8;
+  optional string completion_percentage=9;
 }
