@@ -9,8 +9,8 @@
     <title>Graph Visualization</title>
     <link rel="stylesheet" href="http://localhost:8081/css/demo.css">
     <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-    <script src="http://localhost:8081/node_modules/dagre-d3/build/dist/dagre-d3.js"></script>
-    <script src="http://localhost:8081/node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="../public/vendor/dagre-d3/build/dist/dagre-d3.js"></script>
+    <script src="../public/vendor/jquery/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
     <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
     <script src="localhost:8081/socket.io/socket.io.js"></script>
@@ -26,15 +26,11 @@
     <link href="../public/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <!--link href="http://localhost:8081/css/exectab.css" rel="stylesheet" type="text/css"-->
     <link href='http://fonts.googleapis.com/css?family=PT+Sans:400,700' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" href="http://localhost:8081/css/reset.css">
+    <link rel="stylesheet" href="../public/css/reset1.css">
     <!-- CSS reset -->
-    <link rel="stylesheet" href="http://localhost:8081/css/style.css">
+    <link rel="stylesheet" href="../public/css/style1.css">
     <!-- Resource style -->
-    <link rel="stylesheet" href="css/reset.css">
-    <!-- CSS reset -->
-    <link rel="stylesheet" href="css/style.css">
-    <!-- Resource style -->
-    <script src="http://localhost:8081/js/modernizr.js"></script>
+    <script src="../public/js/modernizr.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/list.js/1.2.0/list.min.js"></script>
     <!-- Modernizr -->
     <style id="css">
@@ -127,7 +123,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" style="color:rgb(185,185,185)" href="index.html">Expresso v2.0</a>
+                <a class="navbar-brand" style="color:rgb(185,185,185)" href="index.html">Krama v1.0</a>
             </div>
             <!-- /.navbar-header -->
             <ul class="nav navbar-top-links navbar-right">
@@ -587,7 +583,7 @@ $(document).ready(function () {
             function creategraphs(data_updated){
                 data_updated=processrows(data_updated)
                 console.log(data_updated)
-                for (var idx in data_updated){
+                for (var idx=data_updated.length;idx-- >0;){
                     var hook = d3.select($element[0])
                     .append('div')
                     .attr('id','id_'+data_updated[idx].key)
@@ -694,7 +690,7 @@ $(document).ready(function () {
                     //oldkeys.push(old_data[idx].key)
                 }
                 var hook
-                for (var idx in data_updated){
+                for (var idx=data_updated.length;idx-- >0;){
                     //if(oldkeys.indexOf(data_updated[idx].key)==-1){
                     if(!d3.select('#id_'+String(data_updated[idx].key)).empty()){
                         //updategraph(data_updated[idx])
@@ -935,10 +931,8 @@ $(document).ready(function () {
         };
     });
     </script>
-    <script src="http://localhost:8081/js/demo.js"></script>
-    <script src="http://localhost:8081/js/main.js"></script>
-    <script src="js/jquery-2.1.1.js"></script>
-    <script src="js/main.js"></script>
+    <script src="../public/js/demo.js"></script>
+    <script src="../public/js/main.js"></script>
     <!-- Resource jQuery -->
     <!-- Resource jQuery -->
 </body>

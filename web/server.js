@@ -35,7 +35,7 @@ var connection = mysql.createConnection({
   host     : 'localhost',
   user     : 'root',
   password : 'mysql',
-  database : 'expresso_db'
+  database : 'krama_db'
 });
     connection.connect();
 

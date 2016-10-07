@@ -1,5 +1,9 @@
 from __future__ import absolute_import
 from time import sleep
+import subprocess
+
+def execute_shell(filename):
+    subprocess.call("bash "+filename,shell=True)
 
 def execute_config_job(job_proto):
     pass

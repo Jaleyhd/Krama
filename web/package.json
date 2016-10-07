@@ -1,28 +1,31 @@
 {
-  "name": "sb-admin-2",
-  "title": "SB Admin 2",
-  "version": "3.3.7+1",
-  "homepage": "http://startbootstrap.com/template-overviews/sb-admin-2",
-  "author": "Start Bootstrap",
-  "license": {
-    "type": "MIT",
-    "url": "https://github.com/BlackrockDigital/startbootstrap/blob/gh-pages/LICENSE"
+  "name": "krama",
+  "version": "1.0.0",
+  "description": "Python-Angular based Schedular",
+  "main": "server.js",
+  "scripts": {
+    "test": "node server.js",
+    "start": "node server.js"
   },
-  "devDependencies": {
-    "browser-sync": "^2.13.0",
-    "gulp": "^3.9.1",
-    "gulp-clean-css": "^2.0.10",
-    "gulp-header": "^1.8.7",
-    "gulp-install": "^0.6.0",
-    "gulp-less": "^3.1.0",
-    "gulp-rename": "^1.2.2",
-    "gulp-uglify": "^1.5.4"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/BlackrockDigital/startbootstrap-sb-admin-2.git"
-  },
+  "keywords": [
+    "job",
+    "schedular",
+    "task",
+    "job",
+    "schedular",
+    "directed",
+    "acyclic",
+    "graph"
+  ],
+  "author": "Jaley H Dholakiya",
+  "license": "MIT",
   "dependencies": {
-    "gulp-install": "^0.6.0"
+    "chokidar": "^1.6.0",
+    "cors": "^2.8.1",
+    "express": "^4.14.0",
+    "mysql": "^2.11.1",
+    "sleep": "^4.0.0",
+    "socket.io": "^1.4.8",
+    "sync-promise": "^1.0.1"
   }
 }

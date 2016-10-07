@@ -34,7 +34,7 @@ EXECUTIONS_TAB_PRIMARY_KEYS=['exec_id','project_name','job_name']
 
 KRAMA_ROOT='/usr/share/krama'
 
-EXECUTION_UPDATE_TRIGGER_PATH='/usr/share/krama/web/main/refresh.txt'
+EXECUTION_UPDATE_TRIGGER_PATH='/usr/share/krama/web/refresh.txt'
 
 
 

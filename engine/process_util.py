@@ -2,6 +2,7 @@ from ..db import queries
 from .process_core import *
 from time import sleep
 from ..conf import common
+from .executions import *
 import random
 
 def process(schedule_jobs,current_exec_path):
@@ -43,10 +44,12 @@ def process_next_jobs(project_name,exec_id):
 def process_job(db_row,project_name,exec_id):
     try:
         queries.db_update_status(db_row=db_row,status=common.EXECUTION_STATUS_RUN)
-        #execute_shell(get_execution_script(schedule_job=schedule_job))
-        sleep(random.randint(1, 6)+random.random()*2)
+        filepath=db_row['project_path']+'/'+db_row['job_name']+'/script.sh'
+        execute_shell(filepath)
+        #sleep(random.randint(1, 6)+random.random()*2)
         queries.db_update_status(db_row=db_row,status=common.EXECUTION_STATUS_SUCCESS)
     except Exception:
+        print 'Exception'
         queries.db_update_status(db_row=db_row,
                                    status=common.EXECUTION_STATUS_FAIL)
     process_next_jobs(project_name=project_name,exec_id=exec_id)
